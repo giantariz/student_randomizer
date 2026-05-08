@@ -82,19 +82,37 @@ export function renderStatsBadge() {
 }
 
 export function renderHistoryList() {
+  const cls = getCurrentClass();
+  const emptyMsg = '<li style="color:var(--text2);font-size:14px;">Κανένας μαθητής δεν έχει κληθεί ακόμα.</li>';
+
+  // Expert mode history (reverse order)
   const ul = document.getElementById('history-list');
   if (session.history.length === 0) {
-    ul.innerHTML = '<li style="color:var(--text2);font-size:14px;">Κανένας μαθητής δεν έχει κληθεί ακόμα.</li>';
-    return;
+    ul.innerHTML = emptyMsg;
+  } else {
+    ul.innerHTML = session.history.slice().reverse().map(h => {
+      const s = cls?.students.find(st => st.id === h.studentId);
+      return `<li>
+        <span>${escHtml(s?.name || '—')}</span>
+        <span class="history-time">${h.time}</span>
+      </li>`;
+    }).join('');
   }
-  const cls = getCurrentClass();
-  ul.innerHTML = session.history.slice().reverse().map(h => {
-    const s = cls?.students.find(st => st.id === h.studentId);
-    return `<li>
-      <span>${escHtml(s?.name || '—')}</span>
-      <span class="history-time">${h.time}</span>
-    </li>`;
-  }).join('');
+
+  // Simple mode history (chronological order with rank)
+  const sul = document.getElementById('simple-history-list');
+  if (!sul) return;
+  if (session.history.length === 0) {
+    sul.innerHTML = emptyMsg;
+  } else {
+    sul.innerHTML = session.history.map((h, i) => {
+      const s = cls?.students.find(st => st.id === h.studentId);
+      return `<li>
+        <span><span class="history-rank">${i + 1}.</span> ${escHtml(s?.name || '—')}</span>
+        <span class="history-time">${h.time}</span>
+      </li>`;
+    }).join('');
+  }
 }
 
 export function renderActionButtons() {
