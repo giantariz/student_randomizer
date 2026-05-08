@@ -1,0 +1,46 @@
+// Shared mutable app state — imported by reference in all modules
+
+export const appData = {
+  exportVersion: 1,
+  currentClassId: null,
+  classes: [],
+  sessionHistory: []
+};
+
+export const session = {
+  classId: null,
+  pool: [],
+  called: [],
+  absent: [],
+  history: []
+};
+
+export let isPickingInProgress = false;
+export function setPickingInProgress(val) { isPickingInProgress = val; }
+
+export function getCurrentClass() {
+  return appData.classes.find(c => c.id === appData.currentClassId) || null;
+}
+
+export function uuid() {
+  return crypto.randomUUID
+    ? crypto.randomUUID()
+    : Math.random().toString(36).slice(2) + Date.now();
+}
+
+export function escHtml(str) {
+  return str
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
+
+export function shuffleArr(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}

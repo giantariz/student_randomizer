@@ -1,0 +1,87 @@
+/* ══════════════════════════════════════════════
+   MODE VISIBILITY RULES
+   ══════════════════════════════════════════════ */
+
+/* Expert-only elements: hidden in simple mode */
+[data-mode=simple] .expert-only { display: none !important; }
+
+/* Simple-only elements: hidden in expert mode */
+[data-mode=expert] .simple-only { display: none !important; }
+
+/* ── Simple mode: setup screen ─────────────── */
+/* #simple-setup is always hidden by default;
+   only shown in simple mode when state=setup    */
+#simple-setup { display: none; }
+
+[data-mode=simple][data-simple-state=setup] #simple-setup    { display: flex; }
+[data-mode=simple][data-simple-state=setup] .action-area     { display: none; }
+[data-mode=simple][data-simple-state=setup] .students-section { display: none; }
+
+/* ── Simple setup card ─────────────────────── */
+.simple-setup {
+  justify-content: center;
+  align-items: center;
+  min-height: calc(100vh - 72px);
+  padding: 24px 16px;
+}
+.simple-setup-card {
+  background: var(--surface);
+  border-radius: var(--radius);
+  padding: 48px 40px;
+  text-align: center;
+  box-shadow: var(--shadow-lg);
+  max-width: 460px;
+  width: 100%;
+}
+.simple-setup-icon  { font-size: 56px; margin-bottom: 12px; line-height: 1; }
+.simple-setup-title { font-size: 26px; font-weight: 800; margin-bottom: 6px; }
+.simple-setup-desc  { font-size: 15px; color: var(--text2); margin-bottom: 28px; }
+
+.simple-count-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 28px;
+}
+.simple-count-btn {
+  width: 44px;
+  height: 44px;
+  padding: 0 !important;
+  font-size: 22px;
+  font-weight: 700;
+  border-radius: 50% !important;
+  justify-content: center;
+}
+#simple-count {
+  width: 110px;
+  font-size: 30px;
+  font-weight: 800;
+  height: 56px;
+}
+.btn-simple-start {
+  width: 100%;
+  max-width: 280px;
+  height: 64px;
+  font-size: 18px;
+  font-weight: 700;
+  border-radius: 14px;
+}
+
+/* ── Mode toggle button ─────────────────────── */
+#btn-mode-toggle {
+  font-size: 13px;
+  height: 36px;
+  padding: 0 12px;
+}
+[data-mode=expert] #btn-mode-toggle {
+  background: color-mix(in srgb, var(--accent) 12%, var(--surface2));
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+@media (max-width: 600px) {
+  .simple-setup-card { padding: 32px 20px; }
+  .simple-setup-title { font-size: 22px; }
+  #simple-count { width: 90px; font-size: 26px; }
+}
