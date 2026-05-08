@@ -1,0 +1,1437 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Student Randomizer</title>
+<style>
+  :root {
+    --bg: #f5f7fa;
+    --surface: #ffffff;
+    --surface2: #eef1f5;
+    --border: #d1d9e0;
+    --text: #1a1f2e;
+    --text2: #5a6378;
+    --accent: #4f6ef7;
+    --accent-hover: #3a58e8;
+    --green: #22c55e;
+    --orange: #f97316;
+    --red: #ef4444;
+    --red-hover: #dc2626;
+    --gray: #94a3b8;
+    --shadow: 0 2px 8px rgba(0,0,0,0.08);
+    --shadow-lg: 0 8px 32px rgba(0,0,0,0.12);
+    --radius: 12px;
+    --radius-sm: 8px;
+  }
+  [data-theme="dark"] {
+    --bg: #0f1117;
+    --surface: #1a1f2e;
+    --surface2: #242938;
+    --border: #2d3448;
+    --text: #e8ecf0;
+    --text2: #8892a4;
+    --shadow: 0 2px 8px rgba(0,0,0,0.3);
+    --shadow-lg: 0 8px 32px rgba(0,0,0,0.4);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    transition: background 0.2s, color 0.2s;
+  }
+  /* HEADER */
+  .header {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    box-shadow: var(--shadow);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .header-left { display: flex; align-items: center; gap: 8px; flex: 1; flex-wrap: wrap; }
+  .header-right { display: flex; align-items: center; gap: 8px; }
+  select {
+    height: 44px;
+    padding: 0 12px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    background: var(--surface);
+    color: var(--text);
+    font-size: 15px;
+    cursor: pointer;
+    max-width: 220px;
+  }
+  /* BUTTONS */
+  .btn {
+    height: 44px;
+    padding: 0 16px;
+    border: none;
+    border-radius: var(--radius-sm);
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: background 0.15s, transform 0.1s;
+    white-space: nowrap;
+    touch-action: manipulation;
+  }
+  .btn:active { transform: scale(0.97); }
+  .btn-primary { background: var(--accent); color: #fff; }
+  .btn-primary:hover { background: var(--accent-hover); }
+  .btn-secondary { background: var(--surface2); color: var(--text); border: 1px solid var(--border); }
+  .btn-secondary:hover { background: var(--border); }
+  .btn-danger { background: var(--red); color: #fff; }
+  .btn-danger:hover { background: var(--red-hover); }
+  .btn-icon { padding: 0 12px; }
+  .btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+  /* MAIN */
+  .main { max-width: 1100px; margin: 0 auto; padding: 20px 16px; }
+  /* ACTION AREA */
+  .action-area {
+    background: var(--surface);
+    border-radius: var(--radius);
+    padding: 24px;
+    margin-bottom: 20px;
+    box-shadow: var(--shadow);
+    text-align: center;
+  }
+  .btn-pick {
+    height: 72px;
+    font-size: 20px;
+    font-weight: 700;
+    padding: 0 40px;
+    border-radius: 16px;
+    margin-bottom: 16px;
+    width: 100%;
+    max-width: 400px;
+    letter-spacing: 0.5px;
+  }
+  .action-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .stats-badge {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 8px 16px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text2);
+  }
+  /* STUDENTS GRID */
+  .section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .section-title { font-size: 16px; font-weight: 600; color: var(--text2); }
+  .students-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+  .student-card {
+    background: var(--surface);
+    border: 2px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 12px 10px;
+    text-align: center;
+    cursor: pointer;
+    transition: border-color 0.15s, background 0.15s, transform 0.1s;
+    position: relative;
+    min-height: 80px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    touch-action: manipulation;
+  }
+  .student-card:active { transform: scale(0.96); }
+  .student-card.in-pool { border-color: var(--green); }
+  .student-card.called { border-color: var(--orange); background: color-mix(in srgb, var(--orange) 8%, var(--surface)); }
+  .student-card.absent { border-color: var(--gray); background: var(--surface2); opacity: 0.6; }
+  .student-card .name { font-size: 13px; font-weight: 600; word-break: break-word; line-height: 1.3; }
+  .student-card .status-dot { font-size: 14px; }
+  .student-card .calls-badge {
+    font-size: 11px;
+    color: var(--text2);
+    background: var(--surface2);
+    border-radius: 10px;
+    padding: 1px 6px;
+  }
+  .student-card .delete-btn {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: none;
+    background: var(--red);
+    color: #fff;
+    font-size: 12px;
+    cursor: pointer;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+    touch-action: manipulation;
+  }
+  .student-card:hover .delete-btn,
+  .student-card:focus-within .delete-btn { display: flex; }
+  /* MANAGE AREA */
+  .manage-area {
+    background: var(--surface);
+    border-radius: var(--radius);
+    padding: 20px;
+    box-shadow: var(--shadow);
+    margin-bottom: 20px;
+  }
+  .add-row { display: flex; gap: 8px; flex-wrap: wrap; }
+  .input-text {
+    height: 44px;
+    padding: 0 14px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    font-size: 15px;
+    background: var(--surface);
+    color: var(--text);
+    flex: 1;
+    min-width: 160px;
+  }
+  .input-text:focus { outline: 2px solid var(--accent); border-color: transparent; }
+  /* HISTORY PANEL */
+  .history-panel {
+    background: var(--surface);
+    border-radius: var(--radius);
+    padding: 20px;
+    box-shadow: var(--shadow);
+    margin-bottom: 20px;
+  }
+  .history-list { list-style: none; }
+  .history-list li {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 14px;
+  }
+  .history-list li:last-child { border-bottom: none; }
+  .history-time { color: var(--text2); font-size: 13px; }
+  /* TOAST */
+  #toast-container {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    pointer-events: none;
+  }
+  .toast {
+    background: #1a1f2e;
+    color: #fff;
+    padding: 12px 20px;
+    border-radius: 10px;
+    font-size: 15px;
+    font-weight: 500;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.25);
+    animation: toast-in 0.3s ease, toast-out 0.3s ease 2.7s forwards;
+    white-space: nowrap;
+  }
+  .toast.success { background: #166534; }
+  .toast.error { background: #7f1d1d; }
+  .toast.info { background: #1e3a5f; }
+  @keyframes toast-in { from { opacity:0; transform:translateY(16px); } to { opacity:1; transform:none; } }
+  @keyframes toast-out { to { opacity:0; transform:translateY(16px); } }
+  /* OVERLAY */
+  .overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.85);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    animation: fade-in 0.2s ease;
+  }
+  @keyframes fade-in { from { opacity:0; } to { opacity:1; } }
+  .overlay-card {
+    background: var(--surface);
+    border-radius: 24px;
+    padding: 48px 64px;
+    text-align: center;
+    max-width: 90vw;
+    box-shadow: var(--shadow-lg);
+    cursor: default;
+    animation: pop-in 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  @keyframes pop-in { from { transform: scale(0.7); opacity:0; } to { transform: scale(1); opacity:1; } }
+  .overlay-label { font-size: 16px; color: var(--text2); margin-bottom: 12px; font-weight: 500; }
+  .overlay-name {
+    font-size: clamp(40px, 8vw, 80px);
+    font-weight: 800;
+    color: var(--accent);
+    line-height: 1.1;
+    margin-bottom: 8px;
+    letter-spacing: -1px;
+  }
+  .overlay-sub { font-size: 14px; color: var(--text2); margin-top: 16px; }
+  /* MODAL */
+  .modal-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: 500;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: fade-in 0.2s ease;
+  }
+  .modal {
+    background: var(--surface);
+    border-radius: var(--radius);
+    padding: 28px;
+    width: min(500px, 92vw);
+    box-shadow: var(--shadow-lg);
+    animation: pop-in 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  .modal h3 { font-size: 18px; margin-bottom: 16px; }
+  .modal p { color: var(--text2); font-size: 14px; margin-bottom: 16px; line-height: 1.5; }
+  .modal-footer { display: flex; gap: 10px; justify-content: flex-end; flex-wrap: wrap; margin-top: 20px; }
+  textarea {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    background: var(--surface);
+    color: var(--text);
+    font-size: 14px;
+    resize: vertical;
+    min-height: 120px;
+    font-family: inherit;
+  }
+  textarea:focus { outline: 2px solid var(--accent); border-color: transparent; }
+  /* GROUPS OVERLAY */
+  .groups-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 16px;
+    margin-top: 16px;
+    text-align: left;
+  }
+  .group-card {
+    background: var(--surface2);
+    border-radius: var(--radius-sm);
+    padding: 14px;
+  }
+  .group-card h4 { font-size: 14px; font-weight: 700; color: var(--accent); margin-bottom: 8px; }
+  .group-card ul { list-style: none; }
+  .group-card ul li { font-size: 14px; padding: 3px 0; border-bottom: 1px solid var(--border); }
+  .group-card ul li:last-child { border-bottom: none; }
+  /* SESSION HISTORY LOG */
+  .log-entry {
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 12px;
+    margin-bottom: 10px;
+  }
+  .log-entry-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 6px;
+  }
+  .log-entry-date { font-size: 13px; font-weight: 600; }
+  .log-entry-class { font-size: 12px; color: var(--text2); }
+  .log-entry-students { font-size: 13px; color: var(--text2); line-height: 1.5; }
+  /* RENAME INPUT */
+  .rename-input {
+    font-size: 15px;
+    padding: 6px 10px;
+    border: 1px solid var(--accent);
+    border-radius: var(--radius-sm);
+    background: var(--surface);
+    color: var(--text);
+    width: 180px;
+  }
+  /* Fullscreen overlay for big name */
+  .overlay-card.fullscreen-mode {
+    background: #000;
+    border-radius: 0;
+    padding: 0;
+    width: 100vw;
+    height: 100vh;
+    max-width: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+  .overlay-card.fullscreen-mode .overlay-name { color: #fff; font-size: clamp(60px, 15vw, 160px); }
+  /* Empty state */
+  .empty-state {
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--text2);
+  }
+  .empty-state .icon { font-size: 48px; margin-bottom: 12px; }
+  .empty-state p { font-size: 15px; }
+  /* Number input */
+  input[type=number] {
+    height: 44px;
+    padding: 0 14px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    font-size: 18px;
+    font-weight: 700;
+    background: var(--surface);
+    color: var(--text);
+    width: 100px;
+    text-align: center;
+  }
+  input[type=number]:focus { outline: 2px solid var(--accent); border-color: transparent; }
+  /* Responsive */
+  @media (max-width: 600px) {
+    .overlay-card { padding: 32px 24px; }
+    .btn-pick { font-size: 17px; height: 64px; }
+    .students-grid { grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); }
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="header">
+  <div class="header-left">
+    <select id="class-select" title="Επιλογή τμήματος"></select>
+    <button class="btn btn-secondary btn-icon" id="btn-new-class" title="Νέο τμήμα">+ Τμήμα</button>
+    <button class="btn btn-secondary btn-icon" id="btn-rename-class" title="Μετονομασία">✏️</button>
+    <button class="btn btn-secondary btn-icon" id="btn-delete-class" title="Διαγραφή τμήματος">🗑️</button>
+  </div>
+  <div class="header-right">
+    <button class="btn btn-secondary btn-icon" id="btn-theme" title="Εναλλαγή θέματος">🌙</button>
+    <button class="btn btn-secondary btn-icon" id="btn-export-json" title="Εξαγωγή JSON">💾</button>
+    <button class="btn btn-secondary btn-icon" id="btn-import-json" title="Εισαγωγή JSON">📁</button>
+    <input type="file" id="file-input" accept=".json" style="display:none">
+  </div>
+</header>
+
+<!-- MAIN -->
+<main class="main">
+
+  <!-- ACTION AREA -->
+  <div class="action-area">
+    <div style="margin-bottom:12px;">
+      <button class="btn btn-primary btn-pick" id="btn-pick">🎲 ΕΠΙΛΟΓΗ ΜΑΘΗΤΗ</button>
+    </div>
+    <div class="action-row">
+      <span class="stats-badge" id="stats-badge">0 / 0 μίλησαν</span>
+      <button class="btn btn-secondary" id="btn-groups">👥 Ομάδες</button>
+      <button class="btn btn-secondary" id="btn-undo" disabled>↩️ Undo</button>
+      <button class="btn btn-secondary" id="btn-reset-session">🔄 Reset</button>
+      <button class="btn btn-secondary btn-icon" id="btn-fullscreen" title="Fullscreen">⛶</button>
+    </div>
+    <div style="margin-top:12px;">
+      <button class="btn btn-secondary" id="btn-save-session" style="font-size:13px;">💾 Αποθήκευση Session</button>
+      <button class="btn btn-secondary" id="btn-export-csv" style="font-size:13px;">📋 Export CSV</button>
+    </div>
+  </div>
+
+  <!-- STUDENTS SECTION -->
+  <div class="section-header">
+    <span class="section-title">Μαθητές</span>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;">
+      <button class="btn btn-secondary" id="btn-quick-mode">⚡ Γρήγορη Δημιουργία</button>
+      <button class="btn btn-secondary" id="btn-show-history">📋 Ιστορικό</button>
+    </div>
+  </div>
+  <div class="students-grid" id="students-grid"></div>
+
+  <!-- MANAGE AREA -->
+  <div class="manage-area">
+    <div class="add-row">
+      <input type="text" class="input-text" id="new-student-input" placeholder="Όνομα μαθητή...">
+      <button class="btn btn-primary" id="btn-add-student">+ Προσθήκη</button>
+      <button class="btn btn-secondary" id="btn-paste-list">📋 Paste Λίστα</button>
+    </div>
+  </div>
+
+  <!-- SESSION HISTORY -->
+  <div class="history-panel" id="session-history-panel">
+    <div class="section-header">
+      <span class="section-title">Ιστορικό Κλήσεων (Σήμερα)</span>
+    </div>
+    <ul class="history-list" id="history-list">
+      <li style="color:var(--text2);font-size:14px;">Κανένας μαθητής δεν έχει κληθεί ακόμα.</li>
+    </ul>
+  </div>
+
+</main>
+
+<!-- TOAST CONTAINER -->
+<div id="toast-container"></div>
+
+<script>
+// ============================================================
+// DATA MODEL & PERSISTENCE
+// ============================================================
+function uuid() {
+  return crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).slice(2) + Date.now();
+}
+
+function loadData() {
+  try {
+    const raw = localStorage.getItem('sr_data');
+    if (raw) return JSON.parse(raw);
+  } catch {}
+  return { exportVersion: 1, currentClassId: null, classes: [], sessionHistory: [] };
+}
+
+function saveData() {
+  localStorage.setItem('sr_data', JSON.stringify(appData));
+}
+
+function loadSession() {
+  try {
+    const raw = localStorage.getItem('sr_session');
+    if (raw) return JSON.parse(raw);
+  } catch {}
+  return null;
+}
+
+function saveSession() {
+  localStorage.setItem('sr_session', JSON.stringify(session));
+}
+
+function clearSessionStorage() {
+  localStorage.removeItem('sr_session');
+}
+
+// ============================================================
+// APP STATE
+// ============================================================
+let appData = loadData();
+let session = {
+  classId: null,
+  pool: [],
+  called: [],
+  absent: [],
+  history: []
+};
+let isPickingInProgress = false;
+let isFullscreenOverlay = false;
+
+// ============================================================
+// THEME
+// ============================================================
+const themeBtn = document.getElementById('btn-theme');
+let currentTheme = localStorage.getItem('sr_theme') || 'light';
+
+function applyTheme(t) {
+  currentTheme = t;
+  document.documentElement.setAttribute('data-theme', t);
+  themeBtn.textContent = t === 'dark' ? '☀️' : '🌙';
+  localStorage.setItem('sr_theme', t);
+}
+applyTheme(currentTheme);
+
+themeBtn.addEventListener('click', () => applyTheme(currentTheme === 'dark' ? 'light' : 'dark'));
+
+// ============================================================
+// TOAST
+// ============================================================
+function toast(msg, type = '') {
+  const c = document.getElementById('toast-container');
+  const el = document.createElement('div');
+  el.className = 'toast' + (type ? ' ' + type : '');
+  el.textContent = msg;
+  c.appendChild(el);
+  setTimeout(() => el.remove(), 3000);
+}
+
+// ============================================================
+// MODAL HELPERS
+// ============================================================
+function showModal(html, onReady) {
+  const backdrop = document.createElement('div');
+  backdrop.className = 'modal-backdrop';
+  backdrop.innerHTML = `<div class="modal">${html}</div>`;
+  document.body.appendChild(backdrop);
+  const close = () => backdrop.remove();
+  backdrop.addEventListener('click', (e) => { if (e.target === backdrop) close(); });
+  onReady(backdrop.querySelector('.modal'), close);
+  return { backdrop, close };
+}
+
+function confirmDialog(msg, onConfirm, confirmLabel = 'Διαγραφή', danger = true) {
+  showModal(`
+    <h3>Επιβεβαίωση</h3>
+    <p>${msg}</p>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" data-action="cancel">Ακύρωση</button>
+      <button class="btn ${danger ? 'btn-danger' : 'btn-primary'}" data-action="confirm">${confirmLabel}</button>
+    </div>
+  `, (modal, close) => {
+    modal.querySelector('[data-action=cancel]').onclick = close;
+    modal.querySelector('[data-action=confirm]').onclick = () => { close(); onConfirm(); };
+  });
+}
+
+// ============================================================
+// CLASS UTILITIES
+// ============================================================
+function getCurrentClass() {
+  return appData.classes.find(c => c.id === appData.currentClassId) || null;
+}
+
+function initSessionForClass(classId) {
+  const cls = appData.classes.find(c => c.id === classId);
+  if (!cls) return;
+  session = {
+    classId,
+    pool: cls.students.map(s => s.id),
+    called: [],
+    absent: [],
+    history: []
+  };
+  saveSession();
+}
+
+function restoreOrInitSession(classId) {
+  const saved = loadSession();
+  if (saved && saved.classId === classId) {
+    session = saved;
+  } else {
+    initSessionForClass(classId);
+  }
+}
+
+// ============================================================
+// RENDER
+// ============================================================
+function renderAll() {
+  renderClassSelect();
+  renderStudentsGrid();
+  renderStatsBadge();
+  renderHistoryList();
+  renderActionButtons();
+}
+
+function renderClassSelect() {
+  const sel = document.getElementById('class-select');
+  sel.innerHTML = '';
+  if (appData.classes.length === 0) {
+    const opt = document.createElement('option');
+    opt.textContent = '— Χωρίς τμήμα —';
+    sel.appendChild(opt);
+    return;
+  }
+  appData.classes.forEach(cls => {
+    const opt = document.createElement('option');
+    opt.value = cls.id;
+    opt.textContent = cls.name;
+    if (cls.id === appData.currentClassId) opt.selected = true;
+    sel.appendChild(opt);
+  });
+}
+
+function getStudentStatus(studentId) {
+  if (session.absent.includes(studentId)) return 'absent';
+  if (session.called.includes(studentId)) return 'called';
+  return 'in-pool';
+}
+
+function renderStudentsGrid() {
+  const grid = document.getElementById('students-grid');
+  const cls = getCurrentClass();
+  if (!cls || cls.students.length === 0) {
+    grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1"><div class="icon">👥</div><p>Δεν υπάρχουν μαθητές. Πρόσθεσε τον πρώτο!</p></div>`;
+    return;
+  }
+  grid.innerHTML = '';
+  cls.students.forEach(s => {
+    const status = getStudentStatus(s.id);
+    const dots = { 'in-pool': '🟢', 'called': '🟠', 'absent': '⚫' };
+    const card = document.createElement('div');
+    card.className = `student-card ${status}`;
+    card.dataset.id = s.id;
+    card.innerHTML = `
+      <span class="status-dot">${dots[status]}</span>
+      <span class="name">${escHtml(s.name)}</span>
+      <span class="calls-badge">×${s.totalCalls}</span>
+      <button class="delete-btn" data-delete="${s.id}" title="Διαγραφή">✕</button>
+    `;
+    card.addEventListener('click', (e) => {
+      if (e.target.dataset.delete) return;
+      toggleAbsent(s.id);
+    });
+    card.querySelector('.delete-btn').addEventListener('click', (e) => {
+      e.stopPropagation();
+      deleteStudent(s.id);
+    });
+    grid.appendChild(card);
+  });
+}
+
+function renderStatsBadge() {
+  const cls = getCurrentClass();
+  if (!cls) { document.getElementById('stats-badge').textContent = '0 / 0 μίλησαν'; return; }
+  const total = cls.students.filter(s => !session.absent.includes(s.id)).length;
+  const called = session.called.length;
+  document.getElementById('stats-badge').textContent = `${called} / ${cls.students.length} μίλησαν`;
+}
+
+function renderHistoryList() {
+  const ul = document.getElementById('history-list');
+  if (session.history.length === 0) {
+    ul.innerHTML = '<li style="color:var(--text2);font-size:14px;">Κανένας μαθητής δεν έχει κληθεί ακόμα.</li>';
+    return;
+  }
+  const cls = getCurrentClass();
+  ul.innerHTML = session.history.slice().reverse().map(h => {
+    const s = cls?.students.find(st => st.id === h.studentId);
+    return `<li><span>${escHtml(s?.name || '—')}</span><span class="history-time">${h.time}</span></li>`;
+  }).join('');
+}
+
+function renderActionButtons() {
+  const cls = getCurrentClass();
+  const hasStudents = cls && cls.students.length > 0;
+  const availablePool = session.pool.filter(id => !session.absent.includes(id));
+  document.getElementById('btn-pick').disabled = !hasStudents || availablePool.length === 0;
+  document.getElementById('btn-groups').disabled = !hasStudents;
+  document.getElementById('btn-undo').disabled = session.history.length === 0;
+}
+
+function escHtml(str) {
+  return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// ============================================================
+// CLASS MANAGEMENT
+// ============================================================
+document.getElementById('class-select').addEventListener('change', (e) => {
+  switchClass(e.target.value);
+});
+
+function switchClass(classId) {
+  appData.currentClassId = classId;
+  saveData();
+  restoreOrInitSession(classId);
+  renderAll();
+}
+
+document.getElementById('btn-new-class').addEventListener('click', () => {
+  showModal(`
+    <h3>Νέο Τμήμα</h3>
+    <input type="text" class="input-text" id="new-class-name" placeholder="π.χ. Α1 - Δίκτυα" style="width:100%">
+    <div class="modal-footer">
+      <button class="btn btn-secondary" data-action="cancel">Ακύρωση</button>
+      <button class="btn btn-primary" data-action="confirm">Δημιουργία</button>
+    </div>
+  `, (modal, close) => {
+    const inp = modal.querySelector('#new-class-name');
+    inp.focus();
+    const create = () => {
+      const name = inp.value.trim();
+      if (!name) { inp.focus(); return; }
+      const cls = { id: uuid(), name, students: [] };
+      appData.classes.push(cls);
+      appData.currentClassId = cls.id;
+      saveData();
+      initSessionForClass(cls.id);
+      close();
+      renderAll();
+      toast('Τμήμα "' + name + '" δημιουργήθηκε!', 'success');
+    };
+    inp.addEventListener('keydown', e => { if (e.key === 'Enter') create(); });
+    modal.querySelector('[data-action=cancel]').onclick = close;
+    modal.querySelector('[data-action=confirm]').onclick = create;
+  });
+});
+
+document.getElementById('btn-rename-class').addEventListener('click', () => {
+  const cls = getCurrentClass();
+  if (!cls) { toast('Δεν υπάρχει τμήμα', 'error'); return; }
+  showModal(`
+    <h3>Μετονομασία Τμήματος</h3>
+    <input type="text" class="input-text" id="rename-input" value="${escHtml(cls.name)}" style="width:100%">
+    <div class="modal-footer">
+      <button class="btn btn-secondary" data-action="cancel">Ακύρωση</button>
+      <button class="btn btn-primary" data-action="confirm">Αποθήκευση</button>
+    </div>
+  `, (modal, close) => {
+    const inp = modal.querySelector('#rename-input');
+    inp.focus(); inp.select();
+    const save = () => {
+      const name = inp.value.trim();
+      if (!name) return;
+      cls.name = name;
+      saveData();
+      close();
+      renderAll();
+      toast('Μετονομάστηκε σε "' + name + '"', 'success');
+    };
+    inp.addEventListener('keydown', e => { if (e.key === 'Enter') save(); });
+    modal.querySelector('[data-action=cancel]').onclick = close;
+    modal.querySelector('[data-action=confirm]').onclick = save;
+  });
+});
+
+document.getElementById('btn-delete-class').addEventListener('click', () => {
+  const cls = getCurrentClass();
+  if (!cls) return;
+  confirmDialog(
+    `Διαγραφή τμήματος "<strong>${escHtml(cls.name)}</strong>"; Δεν μπορεί να αναιρεθεί.`,
+    () => {
+      appData.classes = appData.classes.filter(c => c.id !== cls.id);
+      appData.currentClassId = appData.classes[0]?.id || null;
+      saveData();
+      clearSessionStorage();
+      if (appData.currentClassId) restoreOrInitSession(appData.currentClassId);
+      else session = { classId: null, pool: [], called: [], absent: [], history: [] };
+      renderAll();
+      toast('Τμήμα διαγράφηκε', 'error');
+    },
+    'Διαγραφή'
+  );
+});
+
+// ============================================================
+// STUDENT MANAGEMENT
+// ============================================================
+document.getElementById('btn-add-student').addEventListener('click', addStudentFromInput);
+document.getElementById('new-student-input').addEventListener('keydown', e => {
+  if (e.key === 'Enter') addStudentFromInput();
+});
+
+function addStudentFromInput() {
+  const inp = document.getElementById('new-student-input');
+  const name = inp.value.trim();
+  if (!name) { inp.focus(); return; }
+  const cls = getCurrentClass();
+  if (!cls) { toast('Δημιούργησε πρώτα ένα τμήμα', 'error'); return; }
+  addStudent(cls, name);
+  inp.value = '';
+  inp.focus();
+}
+
+function addStudent(cls, name) {
+  const s = { id: uuid(), name, totalCalls: 0 };
+  cls.students.push(s);
+  session.pool.push(s.id);
+  saveData();
+  saveSession();
+  renderAll();
+}
+
+function deleteStudent(studentId) {
+  const cls = getCurrentClass();
+  if (!cls) return;
+  cls.students = cls.students.filter(s => s.id !== studentId);
+  session.pool = session.pool.filter(id => id !== studentId);
+  session.called = session.called.filter(id => id !== studentId);
+  session.absent = session.absent.filter(id => id !== studentId);
+  session.history = session.history.filter(h => h.studentId !== studentId);
+  saveData();
+  saveSession();
+  renderAll();
+}
+
+function toggleAbsent(studentId) {
+  if (session.absent.includes(studentId)) {
+    session.absent = session.absent.filter(id => id !== studentId);
+    if (!session.called.includes(studentId)) {
+      session.pool.push(studentId);
+    }
+    toast('Επέστρεψε στο pool', 'info');
+  } else {
+    session.absent.push(studentId);
+    session.pool = session.pool.filter(id => id !== studentId);
+    toast('Μαρκαρίστηκε ως απών', 'info');
+  }
+  saveSession();
+  renderAll();
+}
+
+// ============================================================
+// PASTE LIST
+// ============================================================
+document.getElementById('btn-paste-list').addEventListener('click', () => {
+  const cls = getCurrentClass();
+  if (!cls) { toast('Δημιούργησε πρώτα ένα τμήμα', 'error'); return; }
+  showModal(`
+    <h3>Εισαγωγή Λίστας Μαθητών</h3>
+    <p>Ένα όνομα ανά γραμμή:</p>
+    <textarea id="paste-area" placeholder="Παπαδόπουλος Νίκος&#10;Γεωργίου Μαρία&#10;..."></textarea>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" data-action="cancel">Ακύρωση</button>
+      <button class="btn btn-primary" data-action="confirm">Εισαγωγή</button>
+    </div>
+  `, (modal, close) => {
+    modal.querySelector('#paste-area').focus();
+    modal.querySelector('[data-action=cancel]').onclick = close;
+    modal.querySelector('[data-action=confirm]').onclick = () => {
+      const names = modal.querySelector('#paste-area').value
+        .split('\n').map(n => n.trim()).filter(n => n.length > 0);
+      if (names.length === 0) { toast('Δεν βρέθηκαν ονόματα', 'error'); return; }
+      close();
+      if (cls.students.length > 0) {
+        showModal(`
+          <h3>Υπάρχουν ήδη μαθητές</h3>
+          <p>Τι να κάνω με τους <strong>${cls.students.length}</strong> υπάρχοντες μαθητές;</p>
+          <div class="modal-footer">
+            <button class="btn btn-secondary" data-action="cancel">Ακύρωση</button>
+            <button class="btn btn-secondary" data-action="merge">Merge (προσθήκη)</button>
+            <button class="btn btn-danger" data-action="replace">Replace (αντικατάσταση)</button>
+          </div>
+        `, (modal2, close2) => {
+          modal2.querySelector('[data-action=cancel]').onclick = close2;
+          modal2.querySelector('[data-action=merge]').onclick = () => {
+            close2();
+            names.forEach(n => addStudent(cls, n));
+            toast(`${names.length} μαθητές προστέθηκαν`, 'success');
+          };
+          modal2.querySelector('[data-action=replace]').onclick = () => {
+            close2();
+            cls.students = [];
+            initSessionForClass(cls.id);
+            saveData();
+            names.forEach(n => addStudent(cls, n));
+            toast(`Λίστα αντικαταστάθηκε με ${names.length} μαθητές`, 'success');
+          };
+        });
+      } else {
+        names.forEach(n => addStudent(cls, n));
+        toast(`${names.length} μαθητές προστέθηκαν`, 'success');
+      }
+    };
+  });
+});
+
+// ============================================================
+// QUICK MODE
+// ============================================================
+document.getElementById('btn-quick-mode').addEventListener('click', () => {
+  showModal(`
+    <h3>⚡ Γρήγορη Δημιουργία</h3>
+    <p>Ο καθηγητής μοιράζει αριθμούς στους μαθητές. Το σύστημα επιλέγει "Μαθητής 7" κ.λπ.</p>
+    <div style="display:flex;align-items:center;gap:12px;margin:16px 0;">
+      <label style="font-weight:600;">Αριθμός μαθητών:</label>
+      <input type="number" id="quick-count" min="1" max="100" value="20">
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" data-action="cancel">Ακύρωση</button>
+      <button class="btn btn-primary" data-action="confirm">Δημιουργία</button>
+    </div>
+  `, (modal, close) => {
+    const inp = modal.querySelector('#quick-count');
+    inp.focus(); inp.select();
+    modal.querySelector('[data-action=cancel]').onclick = close;
+    modal.querySelector('[data-action=confirm]').onclick = () => {
+      const n = parseInt(inp.value);
+      if (!n || n < 1) { toast('Δώσε έγκυρο αριθμό', 'error'); return; }
+      close();
+      // Ask: save or temp
+      showModal(`
+        <h3>Αποθήκευση ή Προσωρινή Χρήση;</h3>
+        <p>Θέλεις να αποθηκεύσεις τη λίστα με ${n} μαθητές ή να τη χρησιμοποιήσεις μόνο τώρα (χάνεται μετά το reload);</p>
+        <div class="modal-footer">
+          <button class="btn btn-secondary" data-action="cancel">Ακύρωση</button>
+          <button class="btn btn-secondary" data-action="temp">Μόνο τώρα</button>
+          <button class="btn btn-primary" data-action="save">Αποθήκευση</button>
+        </div>
+      `, (modal2, close2) => {
+        modal2.querySelector('[data-action=cancel]').onclick = close2;
+        modal2.querySelector('[data-action=temp]').onclick = () => {
+          close2();
+          createQuickClass(n, null);
+        };
+        modal2.querySelector('[data-action=save]').onclick = () => {
+          close2();
+          showModal(`
+            <h3>Όνομα Τμήματος</h3>
+            <input type="text" class="input-text" id="quick-class-name" placeholder="π.χ. Β2 - Αριθμοί" style="width:100%" value="Τμήμα ${n} μαθητών">
+            <div class="modal-footer">
+              <button class="btn btn-secondary" data-action="cancel">Ακύρωση</button>
+              <button class="btn btn-primary" data-action="confirm">Δημιουργία</button>
+            </div>
+          `, (modal3, close3) => {
+            const nameInp = modal3.querySelector('#quick-class-name');
+            nameInp.focus(); nameInp.select();
+            modal3.querySelector('[data-action=cancel]').onclick = close3;
+            modal3.querySelector('[data-action=confirm]').onclick = () => {
+              const name = nameInp.value.trim() || `Τμήμα ${n} μαθητών`;
+              close3();
+              createQuickClass(n, name);
+            };
+          });
+        };
+      });
+    };
+  });
+});
+
+function createQuickClass(n, saveName) {
+  const students = [];
+  for (let i = 1; i <= n; i++) {
+    students.push({ id: uuid(), name: `Μαθητής ${i}`, totalCalls: 0 });
+  }
+  if (saveName) {
+    const cls = { id: uuid(), name: saveName, students };
+    appData.classes.push(cls);
+    appData.currentClassId = cls.id;
+    saveData();
+    initSessionForClass(cls.id);
+    renderAll();
+    toast(`"${saveName}" με ${n} μαθητές δημιουργήθηκε!`, 'success');
+  } else {
+    // Temporary: store in a transient class structure without saving to appData permanently
+    const tempId = 'temp_' + uuid();
+    const cls = { id: tempId, name: `Προσωρινό (${n} μαθητές)`, students, _temp: true };
+    appData.classes.push(cls);
+    appData.currentClassId = tempId;
+    // Don't save to localStorage for temp
+    session = {
+      classId: tempId,
+      pool: students.map(s => s.id),
+      called: [],
+      absent: [],
+      history: []
+    };
+    renderAll();
+    toast(`Προσωρινή λίστα με ${n} μαθητές (χάνεται μετά το reload)`, 'info');
+  }
+}
+
+// ============================================================
+// SESSION LOGIC
+// ============================================================
+function getAvailablePool() {
+  return session.pool.filter(id => !session.absent.includes(id));
+}
+
+document.getElementById('btn-pick').addEventListener('click', pickStudent);
+
+function pickStudent() {
+  if (isPickingInProgress) return;
+  const available = getAvailablePool();
+  if (available.length === 0) {
+    const cls = getCurrentClass();
+    const nonAbsent = cls.students.filter(s => !session.absent.includes(s.id));
+    if (nonAbsent.length === 0) {
+      toast('Δεν υπάρχουν διαθέσιμοι μαθητές', 'error');
+      return;
+    }
+    // Reset pool
+    session.pool = nonAbsent.map(s => s.id);
+    saveSession();
+    toast('🔄 Νέος γύρος! Όλοι οι μαθητές επέστρεψαν.', 'info');
+    renderAll();
+    return;
+  }
+  const chosen = available[Math.floor(Math.random() * available.length)];
+  const cls = getCurrentClass();
+  const student = cls.students.find(s => s.id === chosen);
+  if (!student) return;
+  isPickingInProgress = true;
+  document.getElementById('btn-pick').disabled = true;
+  startFlickerReveal(cls.students.filter(s => !session.absent.includes(s.id)), student, () => {
+    // After reveal
+    session.pool = session.pool.filter(id => id !== chosen);
+    session.called.push(chosen);
+    const now = new Date();
+    const timeStr = now.toLocaleTimeString('el-GR', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+    session.history.push({ studentId: chosen, time: timeStr });
+    student.totalCalls++;
+    saveData();
+    saveSession();
+    isPickingInProgress = false;
+    renderAll();
+  });
+}
+
+// ============================================================
+// RAPID FLICKER ANIMATION
+// ============================================================
+function startFlickerReveal(candidates, chosen, onDone) {
+  const overlay = document.createElement('div');
+  overlay.className = 'overlay';
+  const card = document.createElement('div');
+  card.className = 'overlay-card';
+  card.innerHTML = `<div class="overlay-label">Επιλέγω...</div><div class="overlay-name" id="flicker-name">...</div><div class="overlay-sub">κλικ για κλείσιμο</div>`;
+  overlay.appendChild(card);
+  document.body.appendChild(overlay);
+
+  const nameEl = card.querySelector('#flicker-name');
+  const labelEl = card.querySelector('.overlay-label');
+  const total = 1000; // ms
+  const start = Date.now();
+  let done = false;
+
+  playPickSound();
+
+  function tick() {
+    const elapsed = Date.now() - start;
+    if (elapsed >= total) {
+      if (!done) {
+        done = true;
+        nameEl.textContent = chosen.name;
+        labelEl.textContent = '🎉 Επελέγη:';
+        card.style.animation = 'pop-in 0.3s cubic-bezier(0.34,1.56,0.64,1)';
+        onDone();
+        overlay.addEventListener('click', () => overlay.remove());
+        card.querySelector('.overlay-sub').textContent = 'Κλικ οπουδήποτε για κλείσιμο';
+      }
+      return;
+    }
+    const progress = elapsed / total;
+    const delay = 40 + progress * progress * 460;
+    const rnd = candidates[Math.floor(Math.random() * candidates.length)];
+    nameEl.textContent = rnd.name;
+    setTimeout(tick, delay);
+  }
+  tick();
+}
+
+// ============================================================
+// WEB AUDIO — PICK SOUND
+// ============================================================
+function playPickSound() {
+  try {
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const g = ctx.createGain();
+    g.gain.setValueAtTime(0.3, ctx.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.8);
+    g.connect(ctx.destination);
+    [440, 550, 660, 880].forEach((freq, i) => {
+      const o = ctx.createOscillator();
+      o.type = 'sine';
+      o.frequency.setValueAtTime(freq, ctx.currentTime + i * 0.08);
+      o.connect(g);
+      o.start(ctx.currentTime + i * 0.08);
+      o.stop(ctx.currentTime + i * 0.08 + 0.15);
+    });
+  } catch {}
+}
+
+// ============================================================
+// UNDO
+// ============================================================
+document.getElementById('btn-undo').addEventListener('click', () => {
+  if (session.history.length === 0) return;
+  const last = session.history.pop();
+  session.called = session.called.filter(id => id !== last.studentId);
+  if (!session.absent.includes(last.studentId)) {
+    session.pool.push(last.studentId);
+  }
+  const cls = getCurrentClass();
+  const s = cls?.students.find(st => st.id === last.studentId);
+  if (s && s.totalCalls > 0) s.totalCalls--;
+  saveData();
+  saveSession();
+  renderAll();
+  toast('Αναίρεση: ' + (s?.name || '—') + ' επέστρεψε στο pool', 'info');
+});
+
+// ============================================================
+// RESET SESSION
+// ============================================================
+document.getElementById('btn-reset-session').addEventListener('click', () => {
+  confirmDialog(
+    'Επαναφορά session; Όλοι οι μαθητές επιστρέφουν στο pool και το ιστορικό χάνεται.',
+    () => {
+      initSessionForClass(appData.currentClassId);
+      renderAll();
+      toast('Session επαναφέρθηκε', 'info');
+    },
+    'Επαναφορά',
+    false
+  );
+});
+
+// ============================================================
+// SAVE SESSION TO HISTORY
+// ============================================================
+document.getElementById('btn-save-session').addEventListener('click', () => {
+  const cls = getCurrentClass();
+  if (!cls || session.history.length === 0) { toast('Δεν υπάρχει ιστορικό για αποθήκευση', 'error'); return; }
+  const calledNames = session.history.map(h => cls.students.find(s => s.id === h.studentId)?.name).filter(Boolean);
+  const entry = {
+    id: uuid(),
+    date: new Date().toLocaleDateString('el-GR'),
+    classId: cls.id,
+    className: cls.name,
+    calledStudents: calledNames
+  };
+  appData.sessionHistory.unshift(entry);
+  saveData();
+  toast('Session αποθηκεύτηκε στο ιστορικό!', 'success');
+});
+
+// ============================================================
+// GROUPS
+// ============================================================
+document.getElementById('btn-groups').addEventListener('click', () => {
+  const cls = getCurrentClass();
+  if (!cls) return;
+  const presentIds = cls.students.filter(s => !session.absent.includes(s.id));
+  if (presentIds.length < 2) { toast('Χρειάζονται τουλάχιστον 2 παρόντες μαθητές', 'error'); return; }
+  showModal(`
+    <h3>👥 Δημιουργία Ομάδων</h3>
+    <p>${presentIds.length} παρόντες μαθητές.</p>
+    <div style="display:flex;align-items:center;gap:12px;margin:16px 0;">
+      <label style="font-weight:600;">Μέγεθος ομάδας:</label>
+      <input type="number" id="group-size" min="2" max="${presentIds.length}" value="${Math.min(4, presentIds.length)}">
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" data-action="cancel">Ακύρωση</button>
+      <button class="btn btn-primary" data-action="confirm">Δημιουργία</button>
+    </div>
+  `, (modal, close) => {
+    const inp = modal.querySelector('#group-size');
+    inp.focus(); inp.select();
+    modal.querySelector('[data-action=cancel]').onclick = close;
+    modal.querySelector('[data-action=confirm]').onclick = () => {
+      const size = parseInt(inp.value);
+      if (!size || size < 2) { toast('Μέγεθος ≥ 2', 'error'); return; }
+      if (size > presentIds.length) { toast('Λίγοι μαθητές για αυτό το μέγεθος', 'error'); return; }
+      close();
+      showGroupsOverlay(presentIds, size);
+    };
+  });
+});
+
+function shuffleArr(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function showGroupsOverlay(students, groupSize) {
+  const shuffled = shuffleArr(students);
+  const groups = [];
+  for (let i = 0; i < shuffled.length; i += groupSize) {
+    groups.push(shuffled.slice(i, i + groupSize));
+  }
+  const overlay = document.createElement('div');
+  overlay.className = 'overlay';
+  overlay.style.cursor = 'default';
+  const groupsHtml = groups.map((g, i) => `
+    <div class="group-card">
+      <h4>Ομάδα ${i + 1}</h4>
+      <ul>${g.map(s => `<li>${escHtml(s.name)}</li>`).join('')}</ul>
+    </div>
+  `).join('');
+  overlay.innerHTML = `
+    <div style="background:var(--surface);border-radius:24px;padding:32px;max-width:90vw;max-height:90vh;overflow-y:auto;box-shadow:var(--shadow-lg);cursor:default;" onclick="event.stopPropagation()">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+        <h2 style="font-size:22px;">👥 Ομάδες (${groups.length} ομάδες × ~${groupSize})</h2>
+        <button class="btn btn-secondary btn-icon" id="close-groups">✕</button>
+      </div>
+      <div class="groups-grid">${groupsHtml}</div>
+      <div style="text-align:center;margin-top:20px;color:var(--text2);font-size:13px;">Κλικ έξω ή ✕ για κλείσιμο</div>
+    </div>
+  `;
+  document.body.appendChild(overlay);
+  overlay.addEventListener('click', () => overlay.remove());
+  overlay.querySelector('#close-groups').addEventListener('click', () => overlay.remove());
+}
+
+// ============================================================
+// FULLSCREEN
+// ============================================================
+document.getElementById('btn-fullscreen').addEventListener('click', () => {
+  if (!document.fullscreenElement) {
+    document.documentElement.requestFullscreen().catch(() => {});
+  } else {
+    document.exitFullscreen().catch(() => {});
+  }
+});
+
+// ============================================================
+// HISTORICAL LOG
+// ============================================================
+document.getElementById('btn-show-history').addEventListener('click', () => {
+  if (appData.sessionHistory.length === 0) {
+    toast('Δεν υπάρχει αποθηκευμένο ιστορικό', 'info');
+    return;
+  }
+  const entriesHtml = appData.sessionHistory.map(e => `
+    <div class="log-entry">
+      <div class="log-entry-header">
+        <span class="log-entry-date">${escHtml(e.date)}</span>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <span class="log-entry-class">${escHtml(e.className)}</span>
+          <button class="btn btn-secondary btn-icon" style="height:28px;font-size:12px;" data-delete-log="${e.id}">🗑️</button>
+        </div>
+      </div>
+      <div class="log-entry-students">${escHtml(e.calledStudents.join(', '))}</div>
+    </div>
+  `).join('');
+  showModal(`
+    <h3>📋 Ιστορικό Sessions</h3>
+    <div style="max-height:400px;overflow-y:auto;margin-top:12px;" id="log-container">${entriesHtml}</div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" data-action="cancel">Κλείσιμο</button>
+    </div>
+  `, (modal, close) => {
+    modal.querySelector('[data-action=cancel]').onclick = close;
+    modal.querySelector('#log-container').addEventListener('click', (e) => {
+      const id = e.target.dataset.deleteLog;
+      if (!id) return;
+      appData.sessionHistory = appData.sessionHistory.filter(e => e.id !== id);
+      saveData();
+      e.target.closest('.log-entry').remove();
+      toast('Καταχώρηση διαγράφηκε', 'info');
+    });
+  });
+});
+
+// ============================================================
+// EXPORT / IMPORT JSON
+// ============================================================
+document.getElementById('btn-export-json').addEventListener('click', () => {
+  const blob = new Blob([JSON.stringify(appData, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'randomizer_data.json';
+  a.click();
+  URL.revokeObjectURL(url);
+  toast('Αρχείο αποθηκεύτηκε!', 'success');
+});
+
+document.getElementById('btn-import-json').addEventListener('click', () => {
+  document.getElementById('file-input').click();
+});
+
+document.getElementById('file-input').addEventListener('change', (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+  e.target.value = '';
+  const reader = new FileReader();
+  reader.onload = (ev) => {
+    let imported;
+    try { imported = JSON.parse(ev.target.result); } catch {
+      toast('Μη έγκυρο αρχείο JSON', 'error'); return;
+    }
+    if (!imported.classes) { toast('Μη έγκυρη μορφή αρχείου', 'error'); return; }
+    showModal(`
+      <h3>Εισαγωγή Δεδομένων</h3>
+      <p>Βρέθηκαν <strong>${imported.classes.length}</strong> τμήματα. Τι θέλεις να κάνεις;</p>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" data-action="cancel">Ακύρωση</button>
+        <button class="btn btn-secondary" data-action="merge">Merge (συγχώνευση)</button>
+        <button class="btn btn-danger" data-action="replace">Replace (αντικατάσταση)</button>
+      </div>
+    `, (modal, close) => {
+      modal.querySelector('[data-action=cancel]').onclick = close;
+      modal.querySelector('[data-action=merge]').onclick = () => {
+        close();
+        imported.classes.forEach(cls => {
+          if (!appData.classes.find(c => c.id === cls.id)) {
+            appData.classes.push(cls);
+          }
+        });
+        if (imported.sessionHistory) {
+          imported.sessionHistory.forEach(h => {
+            if (!appData.sessionHistory.find(e => e.id === h.id)) appData.sessionHistory.push(h);
+          });
+        }
+        saveData();
+        renderAll();
+        toast('Δεδομένα συγχωνεύτηκαν!', 'success');
+      };
+      modal.querySelector('[data-action=replace]').onclick = () => {
+        close();
+        appData = { ...imported, exportVersion: 1 };
+        if (!appData.sessionHistory) appData.sessionHistory = [];
+        appData.currentClassId = appData.classes[0]?.id || null;
+        saveData();
+        clearSessionStorage();
+        if (appData.currentClassId) restoreOrInitSession(appData.currentClassId);
+        renderAll();
+        toast('Δεδομένα αντικαταστάθηκαν!', 'success');
+      };
+    });
+  };
+  reader.readAsText(file);
+});
+
+// ============================================================
+// EXPORT CSV
+// ============================================================
+document.getElementById('btn-export-csv').addEventListener('click', () => {
+  if (appData.sessionHistory.length === 0 && session.history.length === 0) {
+    toast('Δεν υπάρχει ιστορικό για εξαγωγή', 'error'); return;
+  }
+  const cls = getCurrentClass();
+  let rows = [['Ημερομηνία', 'Τμήμα', 'Μαθητές που κλήθηκαν']];
+  // Current session
+  if (session.history.length > 0 && cls) {
+    const names = session.history.map(h => cls.students.find(s => s.id === h.studentId)?.name).filter(Boolean);
+    rows.push([new Date().toLocaleDateString('el-GR'), cls.name, names.join('; ')]);
+  }
+  // Saved history
+  appData.sessionHistory.forEach(e => {
+    rows.push([e.date, e.className, e.calledStudents.join('; ')]);
+  });
+  const csv = rows.map(r => r.map(c => `"${String(c).replace(/"/g,'""')}"`).join(',')).join('\n');
+  const blob = new Blob(['﻿' + csv], { type: 'text/csv;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'session_history.csv';
+  a.click();
+  URL.revokeObjectURL(url);
+  toast('CSV εξήχθη!', 'success');
+});
+
+// ============================================================
+// INIT
+// ============================================================
+function init() {
+  if (appData.classes.length === 0) {
+    // No classes yet — show empty state
+    renderAll();
+    return;
+  }
+  if (!appData.currentClassId || !appData.classes.find(c => c.id === appData.currentClassId)) {
+    appData.currentClassId = appData.classes[0].id;
+    saveData();
+  }
+  restoreOrInitSession(appData.currentClassId);
+  renderAll();
+}
+
+init();
+</script>
+</body>
+</html>
