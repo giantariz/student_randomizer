@@ -18,6 +18,9 @@ export const session = {
 export let isPickingInProgress = false;
 export function setPickingInProgress(val) { isPickingInProgress = val; }
 
+export let simpleUniqueMode = true;
+export function setSimpleUniqueMode(val) { simpleUniqueMode = val; }
+
 export function getCurrentClass() {
   return appData.classes.find(c => c.id === appData.currentClassId) || null;
 }

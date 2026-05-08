@@ -1,4 +1,4 @@
-import { appData } from './state.js';
+import { appData, setSimpleUniqueMode } from './state.js';
 import { createQuickClass } from './students.js';
 import { renderAll } from './render.js';
 import { toast } from './toast.js';
@@ -19,8 +19,14 @@ export function initMode() {
   });
 
   document.getElementById('btn-change-count').addEventListener('click', () => {
-    // Go back to setup screen without destroying the session
     setSimpleState('setup');
+  });
+
+  const chk = document.getElementById('chk-unique');
+  const notice = document.getElementById('repeat-notice');
+  chk.addEventListener('change', () => {
+    setSimpleUniqueMode(chk.checked);
+    notice.hidden = chk.checked;
   });
 }
 

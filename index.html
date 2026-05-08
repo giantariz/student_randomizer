@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Student Randomizer</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎲</text></svg>">
   <link rel="stylesheet" href="css/variables.css">
   <link rel="stylesheet" href="css/base.css">
   <link rel="stylesheet" href="css/components.css">
@@ -59,12 +60,21 @@
       <button class="btn btn-secondary expert-only" id="btn-groups">👥 Τυχαίες Ομάδες</button>
       <button class="btn btn-secondary" id="btn-undo" disabled>↩️ Αναίρεση</button>
       <button class="btn btn-secondary" id="btn-reset-session">🔄 Reset</button>
-      <button class="btn btn-secondary simple-only" id="btn-change-count">🔢 Αλλαγή αριθμού</button>
+      <button class="btn btn-secondary simple-only" id="btn-change-count">🔢 Αλλαγή πλήθους μαθητών</button>
       <button class="btn btn-secondary btn-icon expert-only" id="btn-fullscreen" title="Fullscreen">⛶ Fullscreen</button>
     </div>
     <div style="margin-top:12px;" class="expert-only">
       <button class="btn btn-secondary" id="btn-save-session" style="font-size:13px;">💾 Αποθήκευση</button>
       <button class="btn btn-secondary" id="btn-export-csv" style="font-size:13px;">📋 Εξαγωγή CSV</button>
+    </div>
+    <div class="simple-unique-row simple-only">
+      <label class="simple-unique-label">
+        <input type="checkbox" id="chk-unique" checked>
+        Κάθε μαθητής επιλέγεται μόνο μία φορά ανά γύρο
+      </label>
+      <div id="repeat-notice" class="repeat-notice" hidden>
+        ℹ️ Οι μαθητές μπορούν να επιλεγούν πάνω από μία φορά
+      </div>
     </div>
   </div>
 
@@ -87,6 +97,29 @@
       <button class="btn btn-primary" id="btn-add-student">+ Προσθήκη</button>
       <button class="btn btn-secondary" id="btn-paste-list">📋 Paste Λίστα</button>
     </div>
+  </div>
+
+  <!-- INSTRUCTIONS — simple only -->
+  <div class="simple-instructions simple-only">
+    <div class="simple-instructions-title">📖 Οδηγίες χρήσης</div>
+    <ul class="simple-instructions-list">
+      <li>Πάτα <strong>«🎲 ΕΠΙΛΟΓΗ ΜΑΘΗΤΗ»</strong> για τυχαία επιλογή</li>
+      <li>Η κάρτα του επιλεγμένου μαθητή ανάβει <strong>πράσινη</strong> και μετά πορτοκαλί (έχει κληθεί)</li>
+      <li>Κάνε κλικ σε μαθητή για να τον ορίσεις ως <strong>απόντα</strong> (σκούρο) και να μην επιλεγεί</li>
+      <li>Πάτα <strong>«↩️ Αναίρεση»</strong> για να αναιρέσεις την τελευταία επιλογή</li>
+      <li>Πάτα <strong>«🔄 Reset»</strong> για να ξεκινήσεις νέο γύρο από την αρχή</li>
+      <li>Στο <strong>ιστορικό</strong> παρακάτω βλέπεις τη σειρά και την ώρα κάθε επιλογής</li>
+    </ul>
+  </div>
+
+  <!-- SIMPLE MODE HISTORY — simple only -->
+  <div class="history-panel simple-only" id="simple-session-history-panel">
+    <div class="section-header">
+      <span class="section-title">📋 Ιστορικό Επιλογών</span>
+    </div>
+    <ul class="history-list" id="simple-history-list">
+      <li style="color:var(--text2);font-size:14px;">Κανένας μαθητής δεν έχει κληθεί ακόμα.</li>
+    </ul>
   </div>
 
   <!-- SESSION HISTORY — expert only -->

@@ -1,4 +1,4 @@
-import { appData, session, getCurrentClass, isPickingInProgress, setPickingInProgress } from './state.js';
+import { appData, session, getCurrentClass, isPickingInProgress, setPickingInProgress, simpleUniqueMode } from './state.js';
 import { saveData, saveSession, initSessionForClass } from './data.js';
 import { renderAll } from './render.js';
 import { toast } from './toast.js';
@@ -46,19 +46,29 @@ export function initSessionEvents() {
 
 function pickStudent() {
   if (isPickingInProgress) return;
-  const available = session.pool.filter(id => !session.absent.includes(id));
-  if (available.length === 0) {
-    const cls = getCurrentClass();
+  const cls = getCurrentClass();
+
+  let chosen;
+  if (!simpleUniqueMode) {
+    // Repeat mode: pick from all non-absent students freely
     const nonAbsent = cls.students.filter(s => !session.absent.includes(s.id));
     if (nonAbsent.length === 0) { toast('Δεν υπάρχουν διαθέσιμοι μαθητές', 'error'); return; }
-    session.pool = nonAbsent.map(s => s.id);
-    saveSession();
-    toast('🔄 Νέος γύρος! Όλοι οι μαθητές επέστρεψαν.', 'info');
-    renderAll();
-    return;
+    chosen = nonAbsent[Math.floor(Math.random() * nonAbsent.length)].id;
+  } else {
+    // Unique mode: pick from pool only
+    const available = session.pool.filter(id => !session.absent.includes(id));
+    if (available.length === 0) {
+      const nonAbsent = cls.students.filter(s => !session.absent.includes(s.id));
+      if (nonAbsent.length === 0) { toast('Δεν υπάρχουν διαθέσιμοι μαθητές', 'error'); return; }
+      session.pool = nonAbsent.map(s => s.id);
+      saveSession();
+      toast('🔄 Νέος γύρος! Όλοι οι μαθητές επέστρεψαν.', 'info');
+      renderAll();
+      return;
+    }
+    chosen = available[Math.floor(Math.random() * available.length)];
   }
-  const chosen = available[Math.floor(Math.random() * available.length)];
-  const cls = getCurrentClass();
+
   const student = cls.students.find(s => s.id === chosen);
   if (!student) return;
 
@@ -69,8 +79,10 @@ function pickStudent() {
     cls.students.filter(s => !session.absent.includes(s.id)),
     student,
     () => {
-      session.pool = session.pool.filter(id => id !== chosen);
-      session.called.push(chosen);
+      if (simpleUniqueMode) {
+        session.pool = session.pool.filter(id => id !== chosen);
+        if (!session.called.includes(chosen)) session.called.push(chosen);
+      }
       const timeStr = new Date().toLocaleTimeString('el-GR', {
         hour: '2-digit', minute: '2-digit', second: '2-digit'
       });
@@ -80,6 +92,12 @@ function pickStudent() {
       saveSession();
       setPickingInProgress(false);
       renderAll();
+      // Flash the chosen student's card green
+      const chosenCard = document.querySelector(`.student-card[data-id="${chosen}"]`);
+      if (chosenCard) {
+        chosenCard.classList.add('just-selected');
+        setTimeout(() => chosenCard.classList.remove('just-selected'), 2500);
+      }
     }
   );
 }
