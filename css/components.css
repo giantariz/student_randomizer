@@ -125,11 +125,11 @@ textarea:focus { outline: 2px solid var(--accent); border-color: transparent; }
 }
 .student-card.absent { border-color: var(--gray); background: var(--surface2); opacity: 0.6; }
 .student-card.just-selected {
-  border-color: var(--green) !important;
-  background: color-mix(in srgb, var(--green) 22%, var(--surface)) !important;
+  border-color: var(--orange) !important;
+  background: color-mix(in srgb, var(--orange) 22%, var(--surface)) !important;
   transform: scale(1.06);
   transition: border-color 0.2s, background 0.2s, transform 0.2s;
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--green) 30%, transparent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--orange) 30%, transparent);
 }
 .student-card .name { font-size: 13px; font-weight: 600; word-break: break-word; line-height: 1.3; }
 .student-card .status-dot { font-size: 14px; }
