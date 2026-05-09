@@ -12,6 +12,7 @@ export function initMode() {
   document.getElementById('btn-mode-toggle').addEventListener('click', toggleMode);
 
   document.getElementById('btn-simple-start').addEventListener('click', startSimpleSession);
+  document.getElementById('btn-expert-enter').addEventListener('click', enterExpertMode);
   document.getElementById('btn-count-plus').addEventListener('click', () => adjustCount(1));
   document.getElementById('btn-count-minus').addEventListener('click', () => adjustCount(-1));
   document.getElementById('simple-count').addEventListener('keydown', e => {
@@ -72,6 +73,12 @@ function startSimpleSession() {
   }
   createQuickClass(n, null);
   setSimpleState('active');
+}
+
+function enterExpertMode() {
+  applyMode('expert');
+  renderAll();
+  toast('🔧 Expert Mode ενεργό', 'info');
 }
 
 function adjustCount(delta) {

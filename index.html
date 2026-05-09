@@ -35,19 +35,46 @@
 <!-- MAIN -->
 <main class="main">
 
-  <!-- SIMPLE MODE SETUP SCREEN -->
+  <!-- LANDING / SETUP SCREEN — shown in simple mode before session starts -->
   <div id="simple-setup" class="simple-setup">
-    <div class="simple-setup-card">
-      <div class="simple-setup-icon">🎲</div>
-      <h1 class="simple-setup-title">Student Randomizer</h1>
-      <p class="simple-setup-desc">Ανάθεσε σε κάθε μαθητή έναν αριθμό — βοηθάει να πας με σειρά θρανίων. Μετά ορίσε πόσα παιδιά έχει η τάξη και πάτα <strong>«▶ ΕΝΑΡΞΗ»</strong>.</p>
+
+    <!-- Simple Mode Card -->
+    <div class="mode-landing-card mode-landing-simple">
+      <div class="mode-landing-badge simple-badge">Απλή Λειτουργία</div>
+      <div class="mode-landing-icon">🎲</div>
+      <h2 class="mode-landing-title">Simple Mode</h2>
+      <p class="mode-landing-desc">Ανάθεσε σε κάθε μαθητή έναν αριθμό — βοηθάει να πας με σειρά θρανίων. Ορίσε πόσα παιδιά έχει η τάξη και πάτα <strong>«▶ ΕΝΑΡΞΗ»</strong>.</p>
       <div class="simple-count-row">
         <button class="btn btn-secondary simple-count-btn" id="btn-count-minus" title="Μείωση">−</button>
         <input type="number" id="simple-count" min="1" max="200" value="20" aria-label="Αριθμός μαθητών">
         <button class="btn btn-secondary simple-count-btn" id="btn-count-plus" title="Αύξηση">+</button>
       </div>
       <button class="btn btn-primary btn-simple-start" id="btn-simple-start">▶ ΕΝΑΡΞΗ</button>
+      <ul class="mode-landing-instructions">
+        <li>Πάτα <strong>«🎲 ΕΠΙΛΟΓΗ ΜΑΘΗΤΗ»</strong> για τυχαία επιλογή</li>
+        <li>Η κάρτα γίνεται <strong>πορτοκαλί</strong> όταν κληθεί ο μαθητής</li>
+        <li>Κλικ σε μαθητή → <strong>απών</strong> (εξαιρείται από επιλογή)</li>
+        <li>Πάτα <strong>«↩️ Αναίρεση»</strong> ή <strong>«🔄 Reset»</strong> για νέο γύρο</li>
+      </ul>
     </div>
+
+    <!-- Expert Mode Card -->
+    <div class="mode-landing-card mode-landing-expert">
+      <div class="mode-landing-badge expert-badge">Expert Mode</div>
+      <div class="mode-landing-icon">🔧</div>
+      <h2 class="mode-landing-title">Expert Mode</h2>
+      <p class="mode-landing-desc">Πλήρης διαχείριση τάξης με ονόματα μαθητών, αποθήκευση δεδομένων και πολλές επιπλέον επιλογές.</p>
+      <ul class="mode-landing-features">
+        <li>👤 Καταχώρηση <strong>ονομάτων μαθητών</strong></li>
+        <li>🏫 <strong>Αποθήκευση τάξεων</strong> με μόνιμα δεδομένα</li>
+        <li>👥 Δημιουργία <strong>τυχαίων ομάδων</strong></li>
+        <li>📋 <strong>Ιστορικό κλήσεων</strong> ανά μαθητή</li>
+        <li>💾 Εξαγωγή σε <strong>CSV / JSON</strong></li>
+        <li>⚡ <strong>Γρήγορη Δημιουργία</strong> λίστας μαθητών</li>
+      </ul>
+      <button class="btn btn-expert-enter" id="btn-expert-enter">⚙️ Είσοδος</button>
+    </div>
+
   </div>
 
   <!-- ACTION AREA -->
