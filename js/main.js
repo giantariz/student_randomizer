@@ -98,12 +98,11 @@ document.addEventListener('authchange', async e => {
     document.getElementById('btn-save-session-guest').hidden = true;
 
     // Return to simple mode landing
-    import('./mode.js').then(({ applyMode: _applyMode }) => {
-      document.body.setAttribute('data-mode', 'simple');
-      document.body.setAttribute('data-simple-state', 'setup');
-      localStorage.setItem('sr_mode', 'simple');
-      renderAll();
-    });
+    document.body.setAttribute('data-mode', 'simple');
+    document.body.setAttribute('data-simple-state', 'setup');
+    document.getElementById('btn-mode-toggle').textContent = '🔧 Expert Mode';
+    localStorage.setItem('sr_mode', 'simple');
+    renderAll();
   }
 });
 
