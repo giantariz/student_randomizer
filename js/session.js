@@ -49,6 +49,7 @@ export function initSessionEvents() {
 function pickStudent() {
   if (isPickingInProgress) return;
   const cls = getCurrentClass();
+  if (!cls) return;
 
   let chosen;
   if (!simpleUniqueMode) {
