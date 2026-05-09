@@ -74,11 +74,11 @@ export function renderStudentsGrid() {
 export function renderStatsBadge() {
   const cls = getCurrentClass();
   if (!cls) {
-    document.getElementById('stats-badge').textContent = '0 / 0 μίλησαν';
+    document.getElementById('stats-badge').textContent = '0 / 0 επιλέχθηκαν';
     return;
   }
   const called = session.called.length;
-  document.getElementById('stats-badge').textContent = `${called} / ${cls.students.length} μίλησαν`;
+  document.getElementById('stats-badge').textContent = `${called} / ${cls.students.length} επιλέχθηκαν`;
 }
 
 export function renderHistoryList() {

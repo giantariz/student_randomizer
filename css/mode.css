@@ -225,6 +225,9 @@
 /* Hide simple-only panels during setup */
 [data-mode=simple][data-simple-state=setup] .simple-only { display: none !important; }
 
+/* Hide the two-column layout entirely during setup (landing screen takes over) */
+[data-mode=simple][data-simple-state=setup] .main-layout { display: none; }
+
 @media (max-width: 820px) {
   .simple-setup {
     flex-direction: column;

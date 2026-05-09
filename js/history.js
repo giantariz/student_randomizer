@@ -1,32 +1,9 @@
-import { appData, session, getCurrentClass, uuid, escHtml } from './state.js';
-import { saveData } from './data.js';
+import { appData, escHtml } from './state.js';
 import { toast } from './toast.js';
 import { showModal } from './modal.js';
-import { syncUpsertSessionHistory, syncEnabled } from './syncFirestore.js';
+import { saveData } from './data.js';
 
 export function initHistoryEvents() {
-  document.getElementById('btn-save-session').addEventListener('click', () => {
-    const cls = getCurrentClass();
-    if (!cls || session.history.length === 0) {
-      toast('Δεν υπάρχει ιστορικό για αποθήκευση', 'error');
-      return;
-    }
-    const calledNames = session.history
-      .map(h => cls.students.find(s => s.id === h.studentId)?.name)
-      .filter(Boolean);
-    const entry = {
-      id: uuid(),
-      date: new Date().toLocaleDateString('el-GR'),
-      classId: cls.id,
-      className: cls.name,
-      calledStudents: calledNames
-    };
-    appData.sessionHistory.unshift(entry);
-    saveData();
-    if (syncEnabled()) syncUpsertSessionHistory(entry);
-    toast('Session αποθηκεύτηκε στο ιστορικό!', 'success');
-  });
-
   document.getElementById('btn-show-history').addEventListener('click', () => {
     if (appData.sessionHistory.length === 0) {
       toast('Δεν υπάρχει αποθηκευμένο ιστορικό', 'info');

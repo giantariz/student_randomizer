@@ -30,7 +30,7 @@ function _buildHTML() {
     <div class="auth-screen-backdrop">
       <div class="auth-card">
         <div class="auth-card-icon">🔐</div>
-        <h2 class="auth-card-title">Expert Mode</h2>
+        <h2 class="auth-card-title">Advanced Mode</h2>
         <p class="auth-card-subtitle">Επίλεξε πώς θέλεις να συνεχίσεις</p>
 
         <div class="auth-options">
