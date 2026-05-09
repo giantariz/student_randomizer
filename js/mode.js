@@ -2,6 +2,7 @@ import { appData, setSimpleUniqueMode } from './state.js';
 import { createQuickClass } from './students.js';
 import { renderAll } from './render.js';
 import { toast } from './toast.js';
+import { showAuthScreen } from './authScreen.js';
 
 const STORAGE_KEY = 'sr_mode';
 
@@ -12,6 +13,7 @@ export function initMode() {
   document.getElementById('btn-mode-toggle').addEventListener('click', toggleMode);
 
   document.getElementById('btn-simple-start').addEventListener('click', startSimpleSession);
+  document.getElementById('btn-expert-enter').addEventListener('click', enterExpertMode);
   document.getElementById('btn-count-plus').addEventListener('click', () => adjustCount(1));
   document.getElementById('btn-count-minus').addEventListener('click', () => adjustCount(-1));
   document.getElementById('simple-count').addEventListener('keydown', e => {
@@ -72,6 +74,16 @@ function startSimpleSession() {
   }
   createQuickClass(n, null);
   setSimpleState('active');
+}
+
+function enterExpertMode() {
+  showAuthScreen();
+}
+
+export function applyExpertMode() {
+  applyMode('expert');
+  renderAll();
+  toast('🔧 Expert Mode ενεργό', 'info');
 }
 
 function adjustCount(delta) {

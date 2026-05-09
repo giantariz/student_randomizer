@@ -4,6 +4,7 @@ import { renderAll } from './render.js';
 import { toast } from './toast.js';
 import { confirmDialog } from './modal.js';
 import { startFlickerReveal } from './animation.js';
+import { syncUpsertClass, syncEnabled } from './syncFirestore.js';
 
 export function initSessionEvents() {
   document.getElementById('btn-pick').addEventListener('click', pickStudent);
@@ -17,6 +18,7 @@ export function initSessionEvents() {
     const s = cls?.students.find(st => st.id === last.studentId);
     if (s && s.totalCalls > 0) s.totalCalls--;
     saveData();
+    if (syncEnabled()) syncUpsertClass(getCurrentClass());
     saveSession();
     renderAll();
     toast('Αναίρεση: ' + (s?.name || '—') + ' επέστρεψε στο pool', 'info');
@@ -89,6 +91,7 @@ function pickStudent() {
       session.history.push({ studentId: chosen, time: timeStr });
       student.totalCalls++;
       saveData();
+      if (syncEnabled()) syncUpsertClass(cls);
       saveSession();
       setPickingInProgress(false);
       renderAll();
