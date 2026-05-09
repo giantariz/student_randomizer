@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Student Randomizer — Advanced Mode</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎲</text></svg>">
+  <link rel="stylesheet" href="css/variables.css">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/layout.css">
+  <link rel="stylesheet" href="css/overlays.css">
+  <link rel="stylesheet" href="css/mode.css">
+  <link rel="stylesheet" href="css/auth.css">
+</head>
+<body data-mode="expert">
+
+<!-- HEADER -->
+<header class="header">
+  <div class="header-left">
+    <!-- Guest banner (not logged in) -->
+    <div id="guest-banner" hidden>
+      👤 Επισκέπτης — τα δεδομένα δεν αποθηκεύονται
+      <button class="btn-guest-signin" id="btn-guest-signin">Σύνδεση</button>
+    </div>
+    <!-- Logged-in user info -->
+    <div id="auth-user-info" hidden>
+      <span id="auth-user-email"></span>
+      <button class="btn btn-secondary btn-icon" id="btn-logout">Αποσύνδεση</button>
+    </div>
+    <select id="class-select" title="Επιλογή τμήματος"></select>
+    <button class="btn btn-secondary btn-icon" id="btn-new-class" title="Νέο τμήμα">+ Τμήμα</button>
+    <button class="btn btn-secondary btn-icon" id="btn-rename-class" title="Μετονομασία">✏️ Μετονομασία</button>
+    <button class="btn btn-secondary btn-icon" id="btn-delete-class" title="Διαγραφή τμήματος">🗑️ Διαγραφή</button>
+  </div>
+  <div class="header-right">
+    <a href="simple.html" class="btn btn-secondary" id="btn-simple-mode" title="Μετάβαση στο Simple Mode">🎲 Simple Mode</a>
+    <a href="index.html" class="btn btn-secondary btn-icon" title="Αρχική σελίδα">🏠</a>
+    <button class="btn btn-secondary btn-icon" id="btn-theme" title="Εναλλαγή θέματος">🌙</button>
+  </div>
+</header>
+
+<!-- AUTH SCREEN (fixed overlay, rendered by authScreen.js) -->
+<div id="auth-screen" hidden></div>
+
+<!-- MAIN -->
+<main class="main">
+
+  <!-- TWO-COLUMN LAYOUT -->
+  <div class="main-layout">
+
+    <!-- LEFT COLUMN -->
+    <div class="main-left">
+
+      <!-- ACTION AREA -->
+      <div class="action-area">
+        <div style="margin-bottom:12px;">
+          <button class="btn btn-primary btn-pick" id="btn-pick">🎲 ΕΠΙΛΟΓΗ ΜΑΘΗΤΗ</button>
+        </div>
+        <div class="action-row">
+          <span class="stats-badge" id="stats-badge">0 / 0 επιλέχθηκαν</span>
+          <button class="btn btn-secondary" id="btn-groups">👥 Τυχαίες Ομάδες</button>
+          <button class="btn btn-secondary" id="btn-undo" disabled>↩️ Αναίρεση</button>
+          <button class="btn btn-secondary" id="btn-reset-session">🔄 Reset</button>
+          <button class="btn btn-secondary btn-icon" id="btn-fullscreen" title="Fullscreen">⛶ Fullscreen</button>
+        </div>
+      </div>
+
+      <!-- STUDENTS SECTION -->
+      <div class="students-section">
+        <div class="section-header">
+          <span class="section-title">Μαθητές</span>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;">
+            <button class="btn btn-secondary" id="btn-quick-mode">⚡ Γρήγορη Δημιουργία</button>
+            <button class="btn btn-secondary" id="btn-show-history">📋 Προβολή Ιστορικού</button>
+          </div>
+        </div>
+        <div class="students-grid" id="students-grid"></div>
+      </div>
+
+      <!-- MANAGE AREA -->
+      <div class="manage-area">
+        <div class="add-row">
+          <input type="text" class="input-text" id="new-student-input" placeholder="Όνομα μαθητή...">
+          <button class="btn btn-primary" id="btn-add-student">+ Προσθήκη</button>
+          <button class="btn btn-secondary" id="btn-paste-list">📋 Paste Λίστα</button>
+        </div>
+      </div>
+
+    </div><!-- /main-left -->
+
+    <!-- RIGHT COLUMN: history -->
+    <div class="main-right">
+      <div class="history-panel" id="session-history-panel">
+        <div class="section-header">
+          <span class="section-title">Ιστορικό Κλήσεων (Σήμερα)</span>
+        </div>
+        <ul class="history-list" id="history-list">
+          <li style="color:var(--text2);font-size:14px;">Κανένας μαθητής δεν έχει κληθεί ακόμα.</li>
+        </ul>
+      </div>
+    </div><!-- /main-right -->
+
+  </div><!-- /main-layout -->
+
+</main>
+
+<!-- TOAST CONTAINER -->
+<div id="toast-container"></div>
+
+<script type="module" src="js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,146 @@
+/* ── LANDING PAGE ── */
+
+.header {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  padding: 12px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: var(--shadow);
+}
+.app-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.landing-main {
+  min-height: calc(100vh - 60px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+}
+
+.landing-hero {
+  text-align: center;
+  margin-bottom: 40px;
+}
+.landing-hero-icon { font-size: 56px; line-height: 1; margin-bottom: 12px; }
+.landing-hero-title {
+  font-size: 32px;
+  font-weight: 800;
+  color: var(--text);
+  margin-bottom: 8px;
+}
+.landing-hero-sub {
+  font-size: 16px;
+  color: var(--text2);
+}
+
+.landing-cards {
+  display: flex;
+  gap: 24px;
+  align-items: stretch;
+  justify-content: center;
+  flex-wrap: wrap;
+  width: 100%;
+  max-width: 900px;
+}
+
+.landing-card {
+  background: var(--surface);
+  border-radius: var(--radius);
+  padding: 40px 36px;
+  box-shadow: var(--shadow-lg);
+  flex: 1;
+  max-width: 420px;
+  min-width: 260px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  border: 2px solid transparent;
+  text-decoration: none;
+  color: inherit;
+  transition: border-color 0.2s, box-shadow 0.2s, transform 0.15s;
+  cursor: pointer;
+}
+.landing-card:hover {
+  box-shadow: 0 12px 40px rgba(0,0,0,0.16);
+  transform: translateY(-2px);
+}
+.landing-card:active { transform: scale(0.98); }
+
+.landing-card-simple { border-color: color-mix(in srgb, var(--accent) 30%, transparent); }
+.landing-card-expert  { border-color: color-mix(in srgb, var(--green)  30%, transparent); }
+
+.card-badge {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 4px 12px;
+  border-radius: 20px;
+  margin-bottom: 20px;
+}
+.badge-simple { background: color-mix(in srgb, var(--accent) 14%, var(--surface2)); color: var(--accent); }
+.badge-expert { background: color-mix(in srgb, var(--green)  14%, var(--surface2)); color: var(--green); }
+
+.card-icon  { font-size: 52px; line-height: 1; margin-bottom: 12px; }
+.card-title { font-size: 22px; font-weight: 800; margin-bottom: 10px; color: var(--text); }
+.card-desc  { font-size: 14px; color: var(--text2); margin-bottom: 24px; line-height: 1.6; }
+
+.card-features {
+  list-style: none;
+  text-align: left;
+  width: 100%;
+  font-size: 14px;
+  color: var(--text2);
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  margin-bottom: 28px;
+}
+
+.card-cta {
+  width: 100%;
+  max-width: 240px;
+  height: 56px;
+  font-size: 16px;
+  font-weight: 700;
+  border-radius: 14px;
+  border: none;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: background 0.15s, transform 0.1s;
+  touch-action: manipulation;
+  text-decoration: none;
+  margin-top: auto;
+}
+.cta-simple {
+  background: var(--accent);
+  color: #fff;
+}
+.cta-simple:hover { background: var(--accent-hover); }
+.cta-expert {
+  background: var(--green);
+  color: #fff;
+}
+.cta-expert:hover { background: color-mix(in srgb, var(--green) 80%, #000); }
+
+@media (max-width: 720px) {
+  .landing-cards { flex-direction: column; align-items: center; }
+  .landing-card  { max-width: 480px; }
+  .landing-hero-title { font-size: 26px; }
+}
+@media (max-width: 480px) {
+  .landing-card { padding: 28px 20px; }
+  .landing-hero-icon { font-size: 44px; }
+}
