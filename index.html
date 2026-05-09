@@ -11,6 +11,7 @@
   <link rel="stylesheet" href="css/layout.css">
   <link rel="stylesheet" href="css/overlays.css">
   <link rel="stylesheet" href="css/mode.css">
+  <link rel="stylesheet" href="css/auth.css">
 </head>
 <body data-mode="simple" data-simple-state="setup">
 
@@ -18,6 +19,16 @@
 <header class="header">
   <div class="header-left">
     <span class="app-title simple-only">🎲 Student Randomizer</span>
+    <!-- Guest banner (expert mode, not logged in) -->
+    <div id="guest-banner" hidden>
+      👤 Επισκέπτης — τα δεδομένα δεν αποθηκεύονται
+      <button class="btn-guest-signin" id="btn-guest-signin">Σύνδεση</button>
+    </div>
+    <!-- Logged-in user info -->
+    <div id="auth-user-info" hidden>
+      <span id="auth-user-email"></span>
+      <button class="btn btn-secondary btn-icon" id="btn-logout">Αποσύνδεση</button>
+    </div>
     <select id="class-select" class="expert-only" title="Επιλογή τμήματος"></select>
     <button class="btn btn-secondary btn-icon expert-only" id="btn-new-class" title="Νέο τμήμα">+ Τμήμα</button>
     <button class="btn btn-secondary btn-icon expert-only" id="btn-rename-class" title="Μετονομασία">✏️ Μετονομασία</button>
@@ -31,6 +42,9 @@
     <input type="file" id="file-input" accept=".json" style="display:none">
   </div>
 </header>
+
+<!-- AUTH SCREEN (fixed overlay, rendered by authScreen.js) -->
+<div id="auth-screen" hidden></div>
 
 <!-- MAIN -->
 <main class="main">
@@ -92,6 +106,7 @@
     </div>
     <div style="margin-top:12px;" class="expert-only">
       <button class="btn btn-secondary" id="btn-save-session" style="font-size:13px;">💾 Αποθήκευση</button>
+      <button class="btn btn-secondary" id="btn-save-session-guest" style="font-size:13px;" hidden>🔐 Σύνδεση για αποθήκευση</button>
       <button class="btn btn-secondary" id="btn-export-csv" style="font-size:13px;">📋 Εξαγωγή CSV</button>
     </div>
     <div class="simple-unique-row simple-only">

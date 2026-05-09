@@ -3,6 +3,7 @@ import { saveData, initSessionForClass, restoreOrInitSession, clearSessionStorag
 import { renderAll } from './render.js';
 import { toast } from './toast.js';
 import { showModal, confirmDialog } from './modal.js';
+import { syncUpsertClass, syncDeleteClass, syncEnabled } from './syncFirestore.js';
 
 export function initClassEvents() {
   document.getElementById('class-select').addEventListener('change', e => {
@@ -27,6 +28,7 @@ export function initClassEvents() {
         appData.classes.push(cls);
         appData.currentClassId = cls.id;
         saveData();
+        if (syncEnabled()) syncUpsertClass(cls);
         initSessionForClass(cls.id);
         close();
         renderAll();
@@ -56,6 +58,7 @@ export function initClassEvents() {
         if (!name) return;
         cls.name = name;
         saveData();
+        if (syncEnabled()) syncUpsertClass(cls);
         close();
         renderAll();
         toast(`Μετονομάστηκε σε "${name}"`, 'success');
@@ -72,9 +75,11 @@ export function initClassEvents() {
     confirmDialog(
       `Διαγραφή τμήματος "<strong>${escHtml(cls.name)}</strong>"; Δεν μπορεί να αναιρεθεί.`,
       () => {
+        const deletedId = cls.id;
         appData.classes = appData.classes.filter(c => c.id !== cls.id);
         appData.currentClassId = appData.classes[0]?.id || null;
         saveData();
+        if (syncEnabled()) syncDeleteClass(deletedId);
         clearSessionStorage();
         if (appData.currentClassId) restoreOrInitSession(appData.currentClassId);
         else {

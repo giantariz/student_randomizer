@@ -3,12 +3,14 @@ import { saveData, saveSession, initSessionForClass } from './data.js';
 import { renderAll } from './render.js';
 import { toast } from './toast.js';
 import { showModal } from './modal.js';
+import { syncUpsertClass, syncEnabled } from './syncFirestore.js';
 
 export function addStudent(cls, name) {
   const s = { id: uuid(), name, totalCalls: 0 };
   cls.students.push(s);
   session.pool.push(s.id);
   saveData();
+  if (syncEnabled()) syncUpsertClass(cls);
   saveSession();
   renderAll();
 }
@@ -22,6 +24,7 @@ export function deleteStudent(studentId) {
   session.absent  = session.absent.filter(id => id !== studentId);
   session.history = session.history.filter(h => h.studentId !== studentId);
   saveData();
+  if (syncEnabled()) syncUpsertClass(cls);
   saveSession();
   renderAll();
 }

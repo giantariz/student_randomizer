@@ -2,6 +2,7 @@ import { appData, setSimpleUniqueMode } from './state.js';
 import { createQuickClass } from './students.js';
 import { renderAll } from './render.js';
 import { toast } from './toast.js';
+import { showAuthScreen } from './authScreen.js';
 
 const STORAGE_KEY = 'sr_mode';
 
@@ -76,6 +77,10 @@ function startSimpleSession() {
 }
 
 function enterExpertMode() {
+  showAuthScreen();
+}
+
+export function applyExpertMode() {
   applyMode('expert');
   renderAll();
   toast('🔧 Expert Mode ενεργό', 'info');

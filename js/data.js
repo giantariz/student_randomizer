@@ -1,6 +1,9 @@
 import { appData, session } from './state.js';
+import { getAuthMode } from './auth.js';
 
 export function loadPersistedData() {
+  // Don't overwrite data already loaded from Firestore
+  if (getAuthMode() === 'authenticated') return;
   try {
     const raw = localStorage.getItem('sr_data');
     if (raw) {
@@ -12,12 +15,19 @@ export function loadPersistedData() {
 }
 
 export function saveData() {
+  // Guest mode: data lives in memory only — never write to localStorage
+  if (getAuthMode() === 'guest') return;
   // Don't persist temp classes created in simple mode
   const toSave = {
     ...appData,
     classes: appData.classes.filter(c => !c._temp)
   };
   localStorage.setItem('sr_data', JSON.stringify(toSave));
+}
+
+export function clearSrData() {
+  localStorage.removeItem('sr_data');
+  localStorage.removeItem('sr_session');
 }
 
 export function loadSession() {
