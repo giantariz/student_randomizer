@@ -7,7 +7,6 @@ import { initClassEvents } from './classes.js';
 import { initSessionEvents } from './session.js';
 import { initGroupsEvents } from './groups.js';
 import { initHistoryEvents } from './history.js';
-import { initExportImportEvents } from './exportImport.js';
 import { initMode, getMode, setSimpleState, applyExpertMode } from './mode.js';
 import { initAuth, authState, signOut } from './auth.js';
 import { hideAuthScreen } from './authScreen.js';
@@ -34,7 +33,6 @@ async function init() {
   initSessionEvents();
   initGroupsEvents();
   initHistoryEvents();
-  initExportImportEvents();
 
   // For unauthenticated users, load from localStorage as before
   if (authState.mode === 'unauthenticated') {
@@ -52,7 +50,14 @@ document.addEventListener('authchange', async e => {
   const { mode } = e.detail;
 
   if (mode === 'authenticated') {
-    // Show spinner until data loads (auth screen stays open)
+    // Update header immediately so guest banner hides without waiting for data load
+    document.getElementById('guest-banner').hidden = true;
+    const userInfo = document.getElementById('auth-user-info');
+    const emailEl  = document.getElementById('auth-user-email');
+    userInfo.hidden = false;
+    emailEl.textContent = authState.user?.email || authState.user?.displayName || '';
+
+    // Load data (auth screen stays open as overlay while loading)
     await loadUserData();
 
     hideAuthScreen();
@@ -65,13 +70,6 @@ document.addEventListener('authchange', async e => {
       _offerMigration(guestClasses);
     }
 
-    // Update header
-    document.getElementById('guest-banner').hidden = true;
-    const userInfo = document.getElementById('auth-user-info');
-    const emailEl  = document.getElementById('auth-user-email');
-    userInfo.hidden = false;
-    emailEl.textContent = authState.user?.email || authState.user?.displayName || '';
-
   } else if (mode === 'guest') {
     hideAuthScreen();
     // guest: in-memory only, don't load localStorage (saveData guard handles writes)
@@ -82,8 +80,6 @@ document.addEventListener('authchange', async e => {
 
     document.getElementById('guest-banner').hidden = false;
     document.getElementById('auth-user-info').hidden = true;
-    document.getElementById('btn-save-session').hidden = true;
-    document.getElementById('btn-save-session-guest').hidden = false;
 
   } else if (mode === 'unauthenticated') {
     // Logged out — clear everything and return to landing
@@ -94,13 +90,11 @@ document.addEventListener('authchange', async e => {
 
     document.getElementById('guest-banner').hidden = true;
     document.getElementById('auth-user-info').hidden = true;
-    document.getElementById('btn-save-session').hidden = false;
-    document.getElementById('btn-save-session-guest').hidden = true;
 
     // Return to simple mode landing
     document.body.setAttribute('data-mode', 'simple');
     document.body.setAttribute('data-simple-state', 'setup');
-    document.getElementById('btn-mode-toggle').textContent = '🔧 Expert Mode';
+    document.getElementById('btn-mode-toggle').textContent = '🔧 Advanced Mode';
     localStorage.setItem('sr_mode', 'simple');
     renderAll();
   }
@@ -115,12 +109,6 @@ document.getElementById('btn-logout').addEventListener('click', async () => {
 // ── Guest banner "Σύνδεση" button ─────────────────────────────────────────────
 
 document.getElementById('btn-guest-signin').addEventListener('click', () => {
-  import('./authScreen.js').then(m => m.showAuthScreen());
-});
-
-// ── btn-save-session-guest ────────────────────────────────────────────────────
-
-document.getElementById('btn-save-session-guest').addEventListener('click', () => {
   import('./authScreen.js').then(m => m.showAuthScreen());
 });
 

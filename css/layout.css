@@ -17,7 +17,26 @@
 .app-title { font-size: 17px; font-weight: 700; color: var(--text); }
 
 /* ── MAIN ── */
-.main { max-width: 1100px; margin: 0 auto; padding: 20px 16px; }
+.main { max-width: 1280px; margin: 0 auto; padding: 20px 16px; }
+
+/* ── TWO-COLUMN LAYOUT ── */
+.main-layout {
+  display: flex;
+  gap: 20px;
+  align-items: flex-start;
+}
+.main-left {
+  flex: 1;
+  min-width: 0;
+}
+.main-right {
+  width: 260px;
+  flex-shrink: 0;
+  position: sticky;
+  top: 76px;
+  max-height: calc(100vh - 96px);
+  overflow-y: auto;
+}
 
 /* ── ACTION AREA ── */
 .action-area {
@@ -104,6 +123,10 @@
 }
 
 /* ── RESPONSIVE ── */
+@media (max-width: 900px) {
+  .main-layout { flex-direction: column; }
+  .main-right { width: 100%; position: static; max-height: none; }
+}
 @media (max-width: 600px) {
   .btn-pick { font-size: 17px; height: 64px; }
   .students-grid { grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); }

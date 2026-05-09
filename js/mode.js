@@ -58,12 +58,12 @@ function toggleMode() {
   const next = current === 'simple' ? 'expert' : 'simple';
   applyMode(next);
   renderAll();
-  toast(next === 'expert' ? '🔧 Expert Mode ενεργό' : '✅ Απλή Προβολή ενεργή', 'info');
+  toast(next === 'expert' ? '🔧 Advanced Mode ενεργό' : '✅ Απλή Προβολή ενεργή', 'info');
 }
 
 function updateToggleLabel(mode) {
   const btn = document.getElementById('btn-mode-toggle');
-  if (btn) btn.textContent = mode === 'simple' ? '🔧 Expert Mode' : '← Απλή Προβολή';
+  if (btn) btn.textContent = mode === 'simple' ? '🔧 Advanced Mode' : '← Απλή Προβολή';
 }
 
 function startSimpleSession() {
@@ -83,7 +83,7 @@ function enterExpertMode() {
 export function applyExpertMode() {
   applyMode('expert');
   renderAll();
-  toast('🔧 Expert Mode ενεργό', 'info');
+  toast('🔧 Advanced Mode ενεργό', 'info');
 }
 
 function adjustCount(delta) {
