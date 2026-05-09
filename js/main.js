@@ -48,9 +48,11 @@ document.addEventListener('authchange', async e => {
   if (mode === 'authenticated') {
     // Update header immediately so guest banner hides without waiting for data load
     document.getElementById('guest-banner').hidden = true;
-    const userInfo = document.getElementById('auth-user-info');
-    const emailEl  = document.getElementById('auth-user-email');
-    userInfo.hidden = false;
+    const userInfo  = document.getElementById('auth-user-info');
+    const emailEl   = document.getElementById('auth-user-email');
+    const logoutBtn = document.getElementById('btn-logout');
+    userInfo.hidden  = false;
+    logoutBtn.hidden = false;
     emailEl.textContent = authState.user?.email || authState.user?.displayName || '';
 
     // Load data (auth screen stays open as overlay while loading)
@@ -76,6 +78,7 @@ document.addEventListener('authchange', async e => {
 
     document.getElementById('guest-banner').hidden = false;
     document.getElementById('auth-user-info').hidden = true;
+    document.getElementById('btn-logout').hidden = true;
 
   } else if (mode === 'unauthenticated') {
     // Logged out — clear everything and redirect to landing page
