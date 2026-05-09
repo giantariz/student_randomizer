@@ -14,6 +14,10 @@
   backdrop-filter: blur(4px);
 }
 
+#auth-screen[hidden] {
+  display: none;
+}
+
 .auth-card {
   background: var(--surface);
   border-radius: var(--radius);

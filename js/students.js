@@ -100,6 +100,8 @@ export function initStudentEvents() {
           .split('\n').map(n => n.trim()).filter(n => n.length > 0);
         if (names.length === 0) { toast('Δεν βρέθηκαν ονόματα', 'error'); return; }
         close();
+        const cls = getCurrentClass();
+        if (!cls) { toast('Δεν βρέθηκε τμήμα', 'error'); return; }
         if (cls.students.length > 0) {
           showModal(`
             <h3>Υπάρχουν ήδη μαθητές</h3>
