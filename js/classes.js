@@ -4,6 +4,7 @@ import { renderAll } from './render.js';
 import { toast } from './toast.js';
 import { showModal, confirmDialog } from './modal.js';
 import { syncUpsertClass, syncDeleteClass, syncEnabled } from './syncFirestore.js';
+import { saveCurrentSessionHistory } from './session.js';
 
 export function initClassEvents() {
   document.getElementById('class-select').addEventListener('change', e => {
@@ -98,6 +99,7 @@ export function initClassEvents() {
 }
 
 function switchClass(classId) {
+  saveCurrentSessionHistory();
   appData.currentClassId = classId;
   saveData();
   restoreOrInitSession(classId);

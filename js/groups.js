@@ -12,22 +12,54 @@ export function initGroupsEvents() {
     showModal(`
       <h3>👥 Δημιουργία Ομάδων</h3>
       <p>${present.length} παρόντες μαθητές.</p>
-      <div style="display:flex;align-items:center;gap:12px;margin:16px 0;">
+      <div style="display:flex;gap:16px;margin:12px 0;">
+        <label style="display:flex;align-items:center;gap:6px;cursor:pointer;">
+          <input type="radio" name="group-mode" value="size" checked> Ανά μέγεθος
+        </label>
+        <label style="display:flex;align-items:center;gap:6px;cursor:pointer;">
+          <input type="radio" name="group-mode" value="count"> Ανά αριθμό ομάδων
+        </label>
+      </div>
+      <div id="group-size-row" style="display:flex;align-items:center;gap:12px;margin:8px 0;">
         <label style="font-weight:600;">Μέγεθος ομάδας:</label>
         <input type="number" id="group-size" min="2" max="${present.length}" value="${Math.min(4, present.length)}">
+      </div>
+      <div id="group-count-row" style="display:none;align-items:center;gap:12px;margin:8px 0;">
+        <label style="font-weight:600;">Αριθμός ομάδων:</label>
+        <input type="number" id="group-count" min="2" max="${Math.floor(present.length / 2)}" value="${Math.min(5, Math.floor(present.length / 2))}">
       </div>
       <div class="modal-footer">
         <button class="btn btn-secondary" data-action="cancel">Ακύρωση</button>
         <button class="btn btn-primary" data-action="confirm">Δημιουργία</button>
       </div>
     `, (modal, close) => {
-      const inp = modal.querySelector('#group-size');
-      inp.focus(); inp.select();
+      const sizeRow  = modal.querySelector('#group-size-row');
+      const countRow = modal.querySelector('#group-count-row');
+      const sizeInp  = modal.querySelector('#group-size');
+      const countInp = modal.querySelector('#group-count');
+      modal.querySelectorAll('[name="group-mode"]').forEach(r => {
+        r.addEventListener('change', () => {
+          const byCount = r.value === 'count' && r.checked;
+          sizeRow.style.display  = byCount ? 'none' : 'flex';
+          countRow.style.display = byCount ? 'flex' : 'none';
+          if (byCount) countInp.focus(); else sizeInp.focus();
+        });
+      });
+      sizeInp.focus(); sizeInp.select();
       modal.querySelector('[data-action=cancel]').onclick = close;
       modal.querySelector('[data-action=confirm]').onclick = () => {
-        const size = parseInt(inp.value);
-        if (!size || size < 2) { toast('Μέγεθος ≥ 2', 'error'); return; }
-        if (size > present.length) { toast('Λίγοι μαθητές για αυτό το μέγεθος', 'error'); return; }
+        const byCount = modal.querySelector('[name="group-mode"][value="count"]').checked;
+        let size;
+        if (byCount) {
+          const numGroups = parseInt(countInp.value);
+          if (!numGroups || numGroups < 2) { toast('Αριθμός ομάδων ≥ 2', 'error'); return; }
+          if (numGroups > Math.floor(present.length / 2)) { toast('Πολλές ομάδες για τόσους μαθητές', 'error'); return; }
+          size = Math.ceil(present.length / numGroups);
+        } else {
+          size = parseInt(sizeInp.value);
+          if (!size || size < 2) { toast('Μέγεθος ≥ 2', 'error'); return; }
+          if (size > present.length) { toast('Λίγοι μαθητές για αυτό το μέγεθος', 'error'); return; }
+        }
         close();
         showGroupsOverlay(present, size);
       };

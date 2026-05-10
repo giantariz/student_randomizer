@@ -53,11 +53,19 @@ export async function loadUserData() {
     histSnap.forEach(d => {
       const data = d.data();
       sessionHistory.push({
-        id:              d.id,
-        date:            data.sessionDate,
-        classId:         data.classId || null,
-        className:       data.className,
-        calledStudents:  data.calledStudents || [],
+        id:             d.id,
+        date:           data.sessionDate,
+        classId:        data.classId || null,
+        className:      data.className,
+        calledStudents: data.calledStudents || [],
+        calls:          data.calls          || [],
+        absentStudents: data.absentStudents || [],
+        mode:           data.mode           || 'unique',
+        pickerType:     data.pickerType     || 'neon',
+        totalRounds:    data.totalRounds    || 1,
+        startedAt:      data.startedAt      || null,
+        endedAt:        data.endedAt        || null,
+        durationSec:    data.durationSec    || null,
       });
     });
 
@@ -114,6 +122,14 @@ export async function syncUpsertSessionHistory(entry) {
       classId:        entry.classId || null,
       className:      entry.className,
       calledStudents: entry.calledStudents || [],
+      calls:          entry.calls || [],
+      absentStudents: entry.absentStudents || [],
+      mode:           entry.mode || 'unique',
+      pickerType:     entry.pickerType || 'neon',
+      totalRounds:    entry.totalRounds || 1,
+      startedAt:      entry.startedAt || null,
+      endedAt:        entry.endedAt   || null,
+      durationSec:    entry.durationSec || null,
       sessionDate:    entry.date,
       createdAt:      serverTimestamp(),
     });

@@ -47,12 +47,13 @@ export function updatePickerDisplay(allStudents, calledIds, absentIds) {
 
 // availableStudents: students eligible for selection this round
 // onWinner(student): called as soon as the winner is determined
-export function spinPicker(availableStudents, onWinner) {
+// forcedWinner: optional pre-selected winner (for fair mode weighted pick)
+export function spinPicker(availableStudents, onWinner, forcedWinner = null) {
   clearTimeout(_timer);
   if (_type === 'neon') {
-    _spinNeonOverlay(availableStudents, onWinner);
+    _spinNeonOverlay(availableStudents, onWinner, forcedWinner);
   } else {
-    _spinCandyOverlay(availableStudents, onWinner);
+    _spinCandyOverlay(availableStudents, onWinner, forcedWinner);
   }
 }
 
@@ -94,7 +95,7 @@ function _makeCloseable(overlay) {
 
 // ── Neon Pulse overlay ─────────────────────────────────────────────────────────
 
-function _spinNeonOverlay(students, onWinner) {
+function _spinNeonOverlay(students, onWinner, forcedWinner) {
   if (!students.length) return;
 
   const overlay = _createOverlay();
@@ -125,7 +126,7 @@ function _spinNeonOverlay(students, onWinner) {
     if (step < totalSteps) {
       _timer = setTimeout(tick, delay);
     } else {
-      const winner = students[Math.floor(Math.random() * students.length)];
+      const winner = forcedWinner || students[Math.floor(Math.random() * students.length)];
       textEl.textContent = winner.name;
       display.classList.remove('running');
       display.classList.add('winner-glow');
@@ -139,7 +140,7 @@ function _spinNeonOverlay(students, onWinner) {
 
 // ── Candy Pop overlay ──────────────────────────────────────────────────────────
 
-function _spinCandyOverlay(students, onWinner) {
+function _spinCandyOverlay(students, onWinner, forcedWinner) {
   if (!students.length) return;
 
   // Fallback: if updatePickerDisplay hasn't been called yet, use available students
@@ -200,10 +201,19 @@ function _spinCandyOverlay(students, onWinner) {
     if (step < totalSteps) {
       _timer = setTimeout(tick, delay);
     } else {
-      const winnerId = availableCards[current].dataset.id;
-      const winner   = students.find(s => s.id === winnerId);
+      let winner;
+      if (forcedWinner) {
+        winner = forcedWinner;
+        availableCards.forEach(c => c.classList.remove('picker-active'));
+        const forcedCard = availableCards.find(c => c.dataset.id === forcedWinner.id);
+        if (forcedCard) forcedCard.classList.add('picker-active', 'picker-winner');
+        else availableCards[current].classList.add('picker-winner');
+      } else {
+        const winnerId = availableCards[current].dataset.id;
+        winner         = students.find(s => s.id === winnerId);
+        availableCards[current].classList.add('picker-winner');
+      }
       label.textContent = '🎉 Επελέγη:';
-      availableCards[current].classList.add('picker-winner');
       _timer = setTimeout(() => _makeCloseable(overlay), 1200);
       onWinner(winner);
     }

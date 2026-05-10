@@ -12,7 +12,9 @@ export const session = {
   pool: [],
   called: [],
   absent: [],
-  history: []
+  history: [],    // entries: { studentId, time, pickedAt, roundNumber }
+  startedAt: null,
+  roundNumber: 1
 };
 
 export let isPickingInProgress = false;
@@ -20,6 +22,9 @@ export function setPickingInProgress(val) { isPickingInProgress = val; }
 
 export let simpleUniqueMode = true;
 export function setSimpleUniqueMode(val) { simpleUniqueMode = val; }
+
+export let fairMode = false;
+export function setFairMode(val) { fairMode = val; }
 
 export function getCurrentClass() {
   return appData.classes.find(c => c.id === appData.currentClassId) || null;

@@ -57,6 +57,23 @@
   justify-content: flex-start;
   font-size: 14px;
 }
+.sidebar-toggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--text);
+  cursor: pointer;
+  padding: 4px 0;
+}
+.sidebar-toggle input[type="checkbox"] {
+  accent-color: var(--accent);
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+.sidebar-picker-divider { height: 4px; }
 
 /* ── MAIN ── */
 .main { flex: 1; min-width: 0; padding: 20px 16px; }
