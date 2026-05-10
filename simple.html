@@ -10,6 +10,7 @@
   <link rel="stylesheet" href="css/components.css">
   <link rel="stylesheet" href="css/overlays.css">
   <link rel="stylesheet" href="css/simple.css">
+  <link rel="stylesheet" href="css/picker.css">
 </head>
 <body data-simple-state="setup">
 
@@ -49,6 +50,24 @@
 <!-- ACTIVE SCREEN -->
 <main class="main simple-active">
   <div class="main-layout">
+
+    <!-- PICKER COLUMN -->
+    <div class="picker-column" id="picker-column">
+      <div class="picker-section">
+        <div class="picker-section-title">Επιλογέας</div>
+        <div class="picker-type-toggle">
+          <label class="picker-option">
+            <input type="radio" name="picker-type" value="neon">
+            <span>⚡ Neon</span>
+          </label>
+          <label class="picker-option">
+            <input type="radio" name="picker-type" value="candy">
+            <span>🍬 Candy</span>
+          </label>
+        </div>
+        <div id="picker-display"></div>
+      </div>
+    </div>
 
     <!-- LEFT COLUMN -->
     <div class="main-left">

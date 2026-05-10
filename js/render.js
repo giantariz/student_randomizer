@@ -1,4 +1,5 @@
 import { appData, session, getCurrentClass, escHtml } from './state.js';
+import { updatePickerDisplay } from './picker.js';
 
 // Registered by main.js to break circular dependency with students.js
 let _toggleAbsent = () => {};
@@ -15,6 +16,8 @@ export function renderAll() {
   renderStatsBadge();
   renderHistoryList();
   renderActionButtons();
+  const cls = getCurrentClass();
+  updatePickerDisplay(cls?.students || [], session.called, session.absent);
 }
 
 export function renderClassSelect() {

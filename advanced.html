@@ -12,6 +12,7 @@
   <link rel="stylesheet" href="css/overlays.css">
   <link rel="stylesheet" href="css/mode.css">
   <link rel="stylesheet" href="css/auth.css">
+  <link rel="stylesheet" href="css/picker.css">
 </head>
 <body data-mode="expert">
 
@@ -48,6 +49,20 @@
     <button class="btn btn-secondary sidebar-btn" id="btn-new-class">+ Νέο Τμήμα</button>
     <button class="btn btn-secondary sidebar-btn" id="btn-rename-class">✏️ Μετονομασία</button>
     <button class="btn btn-secondary sidebar-btn" id="btn-delete-class">🗑️ Διαγραφή</button>
+
+    <div class="sidebar-picker-divider"></div>
+    <div class="sidebar-title">Επιλογέας</div>
+    <div class="picker-type-toggle">
+      <label class="picker-option">
+        <input type="radio" name="picker-type" value="neon">
+        <span>⚡ Neon</span>
+      </label>
+      <label class="picker-option">
+        <input type="radio" name="picker-type" value="candy">
+        <span>🍬 Candy</span>
+      </label>
+    </div>
+    <div id="picker-display"></div>
   </aside>
 
   <!-- MAIN -->

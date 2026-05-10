@@ -1,7 +1,7 @@
 import { initTheme } from './theme.js';
 import { toast } from './toast.js';
 import { confirmDialog } from './modal.js';
-import { startFlickerReveal } from './animation.js';
+import { initPicker, spinPicker, updatePickerDisplay } from './picker.js';
 
 // ── State (in-memory only, never persisted) ───────────────────────────────────
 
@@ -48,14 +48,13 @@ function createSession(n) {
 function pick() {
   if (picking) return;
 
-  let chosen;
+  let available;
   if (!uniqueMode) {
-    const nonAbsent = students.filter(s => !absent.includes(s.id));
-    if (nonAbsent.length === 0) { toast('Δεν υπάρχουν διαθέσιμοι μαθητές', 'error'); return; }
-    chosen = nonAbsent[Math.floor(Math.random() * nonAbsent.length)].id;
+    available = students.filter(s => !absent.includes(s.id));
+    if (available.length === 0) { toast('Δεν υπάρχουν διαθέσιμοι μαθητές', 'error'); return; }
   } else {
-    const available = pool.filter(id => !absent.includes(id));
-    if (available.length === 0) {
+    const availableIds = pool.filter(id => !absent.includes(id));
+    if (availableIds.length === 0) {
       const nonAbsent = students.filter(s => !absent.includes(s.id));
       if (nonAbsent.length === 0) { toast('Δεν υπάρχουν διαθέσιμοι μαθητές', 'error'); return; }
       pool = nonAbsent.map(s => s.id);
@@ -63,29 +62,25 @@ function pick() {
       renderAll();
       return;
     }
-    chosen = available[Math.floor(Math.random() * available.length)];
+    available = availableIds.map(id => students.find(s => s.id === id));
   }
-
-  const student = students.find(s => s.id === chosen);
-  if (!student) return;
 
   picking = true;
   document.getElementById('btn-pick').disabled = true;
 
-  const nonAbsentStudents = students.filter(s => !absent.includes(s.id));
-
-  startFlickerReveal(nonAbsentStudents, student, () => {
+  spinPicker(available, (winner) => {
+    const winnerId = winner.id;
     if (uniqueMode) {
-      pool = pool.filter(id => id !== chosen);
-      if (!called.includes(chosen)) called.push(chosen);
+      pool = pool.filter(id => id !== winnerId);
+      if (!called.includes(winnerId)) called.push(winnerId);
     }
     const timeStr = new Date().toLocaleTimeString('el-GR', {
       hour: '2-digit', minute: '2-digit', second: '2-digit'
     });
-    history.push({ studentId: chosen, name: student.name, time: timeStr });
+    history.push({ studentId: winnerId, name: winner.name, time: timeStr });
     picking = false;
     renderAll();
-    const chosenCard = document.querySelector(`.student-card[data-id="${chosen}"]`);
+    const chosenCard = document.querySelector(`.student-card[data-id="${winnerId}"]`);
     if (chosenCard) {
       chosenCard.classList.add('just-selected');
       setTimeout(() => chosenCard.classList.remove('just-selected'), 2500);
@@ -142,6 +137,7 @@ function renderAll() {
   renderHistory();
   renderStats();
   renderButtons();
+  updatePickerDisplay(students, called, absent);
 }
 
 function renderGrid() {
@@ -194,6 +190,7 @@ function renderButtons() {
 
 function init() {
   initTheme();
+  initPicker();
 
   // Setup phase
   document.getElementById('btn-simple-start').addEventListener('click', () => {

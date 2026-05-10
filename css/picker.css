@@ -1,0 +1,277 @@
+/* ── PICKER COLUMN (Simple mode) ─────────────────────────────────────────────*/
+.picker-column {
+  width: 200px;
+  flex-shrink: 0;
+  position: sticky;
+  top: 76px;
+  max-height: calc(100vh - 96px);
+  overflow-y: auto;
+}
+
+.picker-section {
+  background: var(--surface);
+  border-radius: var(--radius);
+  padding: 14px;
+  box-shadow: var(--shadow);
+}
+
+.picker-section-title {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--text2);
+  margin-bottom: 10px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border);
+}
+
+/* ── SIDEBAR PICKER (Advanced mode) ─────────────────────────────────────────*/
+.sidebar-picker-divider {
+  border-top: 1px solid var(--border);
+  margin: 6px 0;
+}
+
+/* ── PICKER TYPE TOGGLE ──────────────────────────────────────────────────────*/
+.picker-type-toggle {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 12px;
+}
+
+.picker-type-toggle .picker-option {
+  flex: 1;
+  cursor: pointer;
+}
+
+.picker-type-toggle .picker-option input[type="radio"] {
+  display: none;
+}
+
+.picker-type-toggle .picker-option span {
+  display: block;
+  text-align: center;
+  padding: 6px 4px;
+  border-radius: var(--radius-sm);
+  font-size: 12px;
+  font-weight: 600;
+  border: 1px solid var(--border);
+  background: var(--surface2);
+  color: var(--text2);
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+  cursor: pointer;
+  user-select: none;
+  white-space: nowrap;
+}
+
+.picker-type-toggle .picker-option input[type="radio"]:checked + span {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+
+/* ── THUMBNAILS ──────────────────────────────────────────────────────────────*/
+
+/* Neon Pulse thumbnail */
+.picker-thumb-neon {
+  height: 68px;
+  background: #020c1b;
+  border: 2px solid #0ea5e9;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 10px rgba(14, 165, 233, 0.25);
+}
+
+.picker-thumb-neon-text {
+  font-size: 15px;
+  font-weight: 900;
+  color: #38bdf8;
+  text-shadow: 0 0 10px #38bdf8;
+}
+
+/* Candy Pop thumbnail */
+.picker-thumb-candy {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 4px;
+  padding: 6px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+}
+
+.picker-thumb-card {
+  border-radius: 6px;
+  padding: 5px 2px;
+  font-size: 10px;
+  font-weight: 700;
+  text-align: center;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--text2);
+}
+
+.picker-thumb-active {
+  background: linear-gradient(135deg, #ec4899, #a855f7);
+  border-color: #f9a8d4;
+  color: #fff;
+  box-shadow: 0 0 6px rgba(236, 72, 153, 0.4);
+}
+
+/* ── FULLSCREEN OVERLAY ───────────────────────────────────────────────────────*/
+.picker-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.86);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px 20px;
+  overflow-y: auto;
+}
+
+.picker-overlay-label {
+  font-size: 22px;
+  font-weight: 700;
+  color: #fff;
+  text-align: center;
+  margin-bottom: 20px;
+  letter-spacing: 0.02em;
+}
+
+.picker-overlay-hint {
+  margin-top: 20px;
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.45);
+  text-align: center;
+  min-height: 20px;
+}
+
+/* ── NEON PULSE overlay ──────────────────────────────────────────────────────*/
+.picker-overlay-neon-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: 520px;
+}
+
+/* Base neon display — used inside overlay */
+.neon-display {
+  width: 100%;
+  height: 130px;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #020c1b;
+  border: 2px solid #0ea5e9;
+  overflow: hidden;
+}
+
+.neon-text {
+  font-size: 34px;
+  font-weight: 900;
+  color: #38bdf8;
+  text-shadow: 0 0 14px #38bdf8;
+  text-align: center;
+  padding: 0 16px;
+  word-break: break-word;
+}
+
+.neon-display.running {
+  animation: neonPulse 0.2s linear infinite alternate;
+}
+
+@keyframes neonPulse {
+  from {
+    box-shadow: 0 0 8px #0ea5e9, inset 0 0 10px rgba(14, 165, 233, 0.1);
+  }
+  to {
+    box-shadow: 0 0 30px #0ea5e9, inset 0 0 24px rgba(14, 165, 233, 0.2);
+  }
+}
+
+.neon-display.winner-glow {
+  box-shadow: 0 0 50px #38bdf8;
+  transition: box-shadow 0.3s ease;
+}
+
+/* Larger neon in overlay */
+.picker-overlay-neon {
+  height: 160px;
+}
+
+.picker-overlay-neon .neon-text {
+  font-size: 42px;
+}
+
+/* ── CANDY POP overlay ───────────────────────────────────────────────────────*/
+.picker-overlay-candy-wrap {
+  width: 100%;
+  max-width: 960px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.picker-overlay-cards {
+  width: 100%;
+}
+
+/* Cards inside overlay: not interactive */
+.picker-overlay-card {
+  cursor: default !important;
+}
+.picker-overlay-card:active {
+  transform: none !important;
+}
+
+/* Active highlight during animation */
+.picker-overlay-card.picker-active {
+  border-color: var(--accent) !important;
+  background: color-mix(in srgb, var(--accent) 18%, var(--surface)) !important;
+  transform: scale(1.07) !important;
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 35%, transparent),
+              0 4px 16px rgba(0, 0, 0, 0.25) !important;
+  z-index: 1;
+  position: relative;
+  transition: transform 0.08s, border-color 0.08s, background 0.08s !important;
+}
+
+/* Winner card after animation stops */
+.picker-overlay-card.picker-winner {
+  border-color: var(--accent) !important;
+  background: color-mix(in srgb, var(--accent) 22%, var(--surface)) !important;
+  transform: scale(1.1) !important;
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 50%, transparent),
+              0 6px 24px rgba(0, 0, 0, 0.3) !important;
+  z-index: 2;
+  position: relative;
+}
+
+/* ── SIMPLE MODE: hide picker column on setup screen ────────────────────────*/
+[data-simple-state=setup] .picker-column { display: none !important; }
+
+/* ── RESPONSIVE ──────────────────────────────────────────────────────────────*/
+@media (max-width: 1100px) {
+  .picker-column { width: 180px; }
+}
+
+@media (max-width: 900px) {
+  .picker-column {
+    width: 100%;
+    position: static;
+    max-height: none;
+  }
+}
+
+@media (max-width: 600px) {
+  .picker-overlay { padding: 16px 12px; }
+  .picker-overlay-label { font-size: 18px; }
+  .picker-overlay-neon { height: 120px; }
+  .picker-overlay-neon .neon-text { font-size: 30px; }
+}
