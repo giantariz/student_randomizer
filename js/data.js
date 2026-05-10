@@ -49,11 +49,13 @@ export function clearSessionStorage() {
 export function initSessionForClass(classId) {
   const cls = appData.classes.find(c => c.id === classId);
   if (!cls) return;
-  session.classId = classId;
-  session.pool = cls.students.map(s => s.id);
-  session.called = [];
-  session.absent = [];
-  session.history = [];
+  session.classId    = classId;
+  session.pool       = cls.students.map(s => s.id);
+  session.called     = [];
+  session.absent     = [];
+  session.history    = [];
+  session.startedAt  = Date.now();
+  session.roundNumber = 1;
   saveSession();
 }
 

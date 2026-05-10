@@ -1,4 +1,4 @@
-import { appData, session, getCurrentClass, escHtml } from './state.js';
+import { appData, session, getCurrentClass, escHtml, simpleUniqueMode } from './state.js';
 import { updatePickerDisplay } from './picker.js';
 
 // Registered by main.js to break circular dependency with students.js
@@ -50,16 +50,18 @@ export function renderStudentsGrid() {
     return;
   }
   grid.innerHTML = '';
+  const avgWeekCalls = _avgWeekCalls(cls.students);
   cls.students.forEach(s => {
     const status = getStudentStatus(s.id);
     const dots = { 'in-pool': '🟢', 'called': '🟠', 'absent': '⚫' };
+    const fairDot = _fairnessDot(s, avgWeekCalls);
     const card = document.createElement('div');
     card.className = `student-card ${status}`;
     card.dataset.id = s.id;
     card.innerHTML = `
       <span class="status-dot">${dots[status]}</span>
       <span class="name">${escHtml(s.name)}</span>
-      <span class="calls-badge">×${s.totalCalls}</span>
+      <span class="calls-badge" title="Σύνολο κλήσεων: ${s.totalCalls}&#10;Αυτή την εβδομάδα: ${s.callsThisWeek || 0}&#10;Αυτόν τον μήνα: ${s.callsThisMonth || 0}">×${s.totalCalls} ${fairDot}</span>
       <button class="delete-btn expert-only" data-delete="${s.id}" title="Διαγραφή">✕</button>
     `;
     card.addEventListener('click', e => {
@@ -81,7 +83,9 @@ export function renderStatsBadge() {
     return;
   }
   const called = session.called.length;
-  document.getElementById('stats-badge').textContent = `${called} / ${cls.students.length} επιλέχθηκαν`;
+  const round  = session.roundNumber || 1;
+  const roundLabel = simpleUniqueMode && round > 1 ? ` · Γύρος ${round}` : '';
+  document.getElementById('stats-badge').textContent = `${called} / ${cls.students.length} επιλέχθηκαν${roundLabel}`;
 }
 
 export function renderHistoryList() {
@@ -131,4 +135,18 @@ function getStudentStatus(studentId) {
   if (session.absent.includes(studentId)) return 'absent';
   if (session.called.includes(studentId))  return 'called';
   return 'in-pool';
+}
+
+function _avgWeekCalls(students) {
+  if (!students.length) return 0;
+  const total = students.reduce((sum, s) => sum + (s.callsThisWeek || 0), 0);
+  return total / students.length;
+}
+
+function _fairnessDot(student, avg) {
+  const w = student.callsThisWeek || 0;
+  if (avg === 0) return '';
+  if (w < avg * 0.7) return '🟢';
+  if (w > avg * 1.3) return '🔴';
+  return '🟠';
 }

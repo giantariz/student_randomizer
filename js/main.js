@@ -1,4 +1,4 @@
-import { appData, session } from './state.js';
+import { appData, session, setSimpleUniqueMode, setFairMode } from './state.js';
 import { loadPersistedData, saveData, restoreOrInitSession, clearSrData } from './data.js';
 import { initTheme } from './theme.js';
 import { renderAll, registerStudentHandlers } from './render.js';
@@ -17,6 +17,35 @@ import { toast } from './toast.js';
 // Register student card handlers in render.js (avoids circular dependency)
 registerStudentHandlers(toggleAbsent, deleteStudent);
 
+function initAdvancedSettings() {
+  const chkUnique = document.getElementById('chk-unique-advanced');
+  const chkFair   = document.getElementById('chk-fair-mode');
+
+  // Restore persisted preferences
+  const savedUnique = localStorage.getItem('sr-unique-mode');
+  const savedFair   = localStorage.getItem('sr-fair-mode');
+  if (savedUnique !== null) {
+    const val = savedUnique !== 'false';
+    chkUnique.checked = val;
+    setSimpleUniqueMode(val);
+  }
+  if (savedFair !== null) {
+    const val = savedFair === 'true';
+    chkFair.checked = val;
+    setFairMode(val);
+  }
+
+  chkUnique.addEventListener('change', () => {
+    setSimpleUniqueMode(chkUnique.checked);
+    localStorage.setItem('sr-unique-mode', chkUnique.checked);
+    renderAll();
+  });
+  chkFair.addEventListener('change', () => {
+    setFairMode(chkFair.checked);
+    localStorage.setItem('sr-fair-mode', chkFair.checked);
+  });
+}
+
 async function init() {
   // initAuth resolves after the first onAuthStateChanged fires.
   // If the user is already logged in (session cookie), this will trigger
@@ -25,6 +54,7 @@ async function init() {
   await initAuth();
 
   initTheme();
+  initAdvancedSettings();
 
   // Wire up all feature event listeners
   initClassEvents();

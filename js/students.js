@@ -15,6 +15,20 @@ export function addStudent(cls, name) {
   renderAll();
 }
 
+export function addStudentsBulk(cls, names, { replace = false } = {}) {
+  if (replace) {
+    cls.students = [];
+    initSessionForClass(cls.id);
+  }
+  const newStudents = names.map(name => ({ id: uuid(), name, totalCalls: 0 }));
+  cls.students.push(...newStudents);
+  newStudents.forEach(s => session.pool.push(s.id));
+  saveData();
+  if (syncEnabled()) syncUpsertClass(cls);
+  saveSession();
+  renderAll();
+}
+
 export function deleteStudent(studentId) {
   const cls = getCurrentClass();
   if (!cls) return;
@@ -115,20 +129,17 @@ export function initStudentEvents() {
             modal2.querySelector('[data-action=cancel]').onclick = close2;
             modal2.querySelector('[data-action=merge]').onclick = () => {
               close2();
-              names.forEach(n => addStudent(cls, n));
+              addStudentsBulk(cls, names);
               toast(`${names.length} μαθητές προστέθηκαν`, 'success');
             };
             modal2.querySelector('[data-action=replace]').onclick = () => {
               close2();
-              cls.students = [];
-              initSessionForClass(cls.id);
-              saveData();
-              names.forEach(n => addStudent(cls, n));
+              addStudentsBulk(cls, names, { replace: true });
               toast(`Λίστα αντικαταστάθηκε με ${names.length} μαθητές`, 'success');
             };
           });
         } else {
-          names.forEach(n => addStudent(cls, n));
+          addStudentsBulk(cls, names);
           toast(`${names.length} μαθητές προστέθηκαν`, 'success');
         }
       };
