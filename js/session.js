@@ -3,10 +3,11 @@ import { saveData, saveSession, initSessionForClass } from './data.js';
 import { renderAll } from './render.js';
 import { toast } from './toast.js';
 import { confirmDialog } from './modal.js';
-import { startFlickerReveal } from './animation.js';
+import { initPicker, spinPicker } from './picker.js';
 import { syncUpsertClass, syncEnabled } from './syncFirestore.js';
 
 export function initSessionEvents() {
+  initPicker();
   document.getElementById('btn-pick').addEventListener('click', pickStudent);
 
   document.getElementById('btn-undo').addEventListener('click', () => {
@@ -51,16 +52,13 @@ function pickStudent() {
   const cls = getCurrentClass();
   if (!cls) return;
 
-  let chosen;
+  let available;
   if (!simpleUniqueMode) {
-    // Repeat mode: pick from all non-absent students freely
-    const nonAbsent = cls.students.filter(s => !session.absent.includes(s.id));
-    if (nonAbsent.length === 0) { toast('Δεν υπάρχουν διαθέσιμοι μαθητές', 'error'); return; }
-    chosen = nonAbsent[Math.floor(Math.random() * nonAbsent.length)].id;
+    available = cls.students.filter(s => !session.absent.includes(s.id));
+    if (available.length === 0) { toast('Δεν υπάρχουν διαθέσιμοι μαθητές', 'error'); return; }
   } else {
-    // Unique mode: pick from pool only
-    const available = session.pool.filter(id => !session.absent.includes(id));
-    if (available.length === 0) {
+    const availableIds = session.pool.filter(id => !session.absent.includes(id));
+    if (availableIds.length === 0) {
       const nonAbsent = cls.students.filter(s => !session.absent.includes(s.id));
       if (nonAbsent.length === 0) { toast('Δεν υπάρχουν διαθέσιμοι μαθητές', 'error'); return; }
       session.pool = nonAbsent.map(s => s.id);
@@ -69,39 +67,35 @@ function pickStudent() {
       renderAll();
       return;
     }
-    chosen = available[Math.floor(Math.random() * available.length)];
+    available = availableIds.map(id => cls.students.find(s => s.id === id));
   }
-
-  const student = cls.students.find(s => s.id === chosen);
-  if (!student) return;
 
   setPickingInProgress(true);
   document.getElementById('btn-pick').disabled = true;
 
-  startFlickerReveal(
-    cls.students.filter(s => !session.absent.includes(s.id)),
-    student,
-    () => {
-      if (simpleUniqueMode) {
-        session.pool = session.pool.filter(id => id !== chosen);
-        if (!session.called.includes(chosen)) session.called.push(chosen);
-      }
-      const timeStr = new Date().toLocaleTimeString('el-GR', {
-        hour: '2-digit', minute: '2-digit', second: '2-digit'
-      });
-      session.history.push({ studentId: chosen, time: timeStr });
-      student.totalCalls++;
-      saveData();
-      if (syncEnabled()) syncUpsertClass(cls);
-      saveSession();
-      setPickingInProgress(false);
-      renderAll();
-      // Flash the chosen student's card green
-      const chosenCard = document.querySelector(`.student-card[data-id="${chosen}"]`);
-      if (chosenCard) {
-        chosenCard.classList.add('just-selected');
-        setTimeout(() => chosenCard.classList.remove('just-selected'), 2500);
-      }
+  spinPicker(available, (winner) => {
+    const winnerId = winner.id;
+    const student  = cls.students.find(s => s.id === winnerId);
+    if (!student) return;
+
+    if (simpleUniqueMode) {
+      session.pool = session.pool.filter(id => id !== winnerId);
+      if (!session.called.includes(winnerId)) session.called.push(winnerId);
     }
-  );
+    const timeStr = new Date().toLocaleTimeString('el-GR', {
+      hour: '2-digit', minute: '2-digit', second: '2-digit'
+    });
+    session.history.push({ studentId: winnerId, time: timeStr });
+    student.totalCalls++;
+    saveData();
+    if (syncEnabled()) syncUpsertClass(cls);
+    saveSession();
+    setPickingInProgress(false);
+    renderAll();
+    const chosenCard = document.querySelector(`.student-card[data-id="${winnerId}"]`);
+    if (chosenCard) {
+      chosenCard.classList.add('just-selected');
+      setTimeout(() => chosenCard.classList.remove('just-selected'), 2500);
+    }
+  });
 }

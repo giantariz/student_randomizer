@@ -280,3 +280,6 @@
   .setup-title { font-size: 20px; }
   #simple-count { width: 90px; font-size: 26px; }
 }
+
+/* ── SIMPLE MODE: show picker-column only in active state ── */
+[data-simple-state=setup]  .picker-column { display: none !important; }
