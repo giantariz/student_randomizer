@@ -13,6 +13,7 @@
   transition: background 0.15s, transform 0.1s;
   white-space: nowrap;
   touch-action: manipulation;
+  text-decoration: none;
 }
 .btn:active { transform: scale(0.97); }
 .btn-primary { background: var(--accent); color: #fff; }
