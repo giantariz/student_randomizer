@@ -7,9 +7,9 @@ import { initClassEvents } from './classes.js';
 import { initSessionEvents } from './session.js';
 import { initGroupsEvents } from './groups.js';
 import { initHistoryEvents } from './history.js';
-import { initMode, getMode, setSimpleState, applyExpertMode } from './mode.js';
+import { applyExpertMode } from './mode.js';
 import { initAuth, authState, signOut } from './auth.js';
-import { hideAuthScreen } from './authScreen.js';
+import { showAuthScreen, hideAuthScreen } from './authScreen.js';
 import { loadUserData, syncUpsertClass } from './syncFirestore.js';
 import { showModal } from './modal.js';
 import { toast } from './toast.js';
@@ -21,11 +21,10 @@ async function init() {
   // initAuth resolves after the first onAuthStateChanged fires.
   // If the user is already logged in (session cookie), this will trigger
   // 'authchange' → authenticated, which handles everything.
-  // If not logged in, authState.mode stays 'unauthenticated' and we fall through.
+  // If not logged in, we show the auth screen immediately.
   await initAuth();
 
   initTheme();
-  initMode();
 
   // Wire up all feature event listeners
   initClassEvents();
@@ -34,12 +33,9 @@ async function init() {
   initGroupsEvents();
   initHistoryEvents();
 
-  // For unauthenticated users, load from localStorage as before
+  // Advanced mode always requires auth — show the screen for unauthenticated visitors
   if (authState.mode === 'unauthenticated') {
-    loadPersistedData();
-    _ensureValidClass();
-    renderAll();
-    _updateSimpleState();
+    showAuthScreen();
   }
   // authenticated/guest states are fully handled by handleAuthChange
 }
@@ -52,9 +48,11 @@ document.addEventListener('authchange', async e => {
   if (mode === 'authenticated') {
     // Update header immediately so guest banner hides without waiting for data load
     document.getElementById('guest-banner').hidden = true;
-    const userInfo = document.getElementById('auth-user-info');
-    const emailEl  = document.getElementById('auth-user-email');
-    userInfo.hidden = false;
+    const userInfo  = document.getElementById('auth-user-info');
+    const emailEl   = document.getElementById('auth-user-email');
+    const logoutBtn = document.getElementById('btn-logout');
+    userInfo.hidden  = false;
+    logoutBtn.hidden = false;
     emailEl.textContent = authState.user?.email || authState.user?.displayName || '';
 
     // Load data (auth screen stays open as overlay while loading)
@@ -80,23 +78,12 @@ document.addEventListener('authchange', async e => {
 
     document.getElementById('guest-banner').hidden = false;
     document.getElementById('auth-user-info').hidden = true;
+    document.getElementById('btn-logout').hidden = true;
 
   } else if (mode === 'unauthenticated') {
-    // Logged out — clear everything and return to landing
-    appData.classes        = [];
-    appData.sessionHistory = [];
-    appData.currentClassId = null;
+    // Logged out — clear everything and redirect to landing page
     clearSrData();
-
-    document.getElementById('guest-banner').hidden = true;
-    document.getElementById('auth-user-info').hidden = true;
-
-    // Return to simple mode landing
-    document.body.setAttribute('data-mode', 'simple');
-    document.body.setAttribute('data-simple-state', 'setup');
-    document.getElementById('btn-mode-toggle').textContent = '🔧 Advanced Mode';
-    localStorage.setItem('sr_mode', 'simple');
-    renderAll();
+    window.location.href = 'index.html';
   }
 });
 
@@ -122,14 +109,6 @@ function _ensureValidClass() {
       saveData();
     }
     if (appData.currentClassId) restoreOrInitSession(appData.currentClassId);
-  }
-}
-
-function _updateSimpleState() {
-  if (getMode() === 'simple') {
-    const hasStudents = appData.currentClassId &&
-      appData.classes.find(c => c.id === appData.currentClassId)?.students.length > 0;
-    setSimpleState(hasStudents ? 'active' : 'setup');
   }
 }
 
