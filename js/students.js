@@ -4,6 +4,7 @@ import { renderAll } from './render.js';
 import { toast } from './toast.js';
 import { showModal } from './modal.js';
 import { syncUpsertClass, syncEnabled } from './syncFirestore.js';
+import { getAuthMode } from './auth.js';
 
 export function addStudent(cls, name) {
   const s = { id: uuid(), name, totalCalls: 0 };
@@ -60,7 +61,7 @@ export function toggleAbsent(studentId) {
 export function createQuickClass(n, saveName) {
   const students = Array.from({ length: n }, (_, i) => ({
     id: uuid(),
-    name: `Μαθητής ${i + 1}`,
+    name: `Μαθητής/ρια ${i + 1}`,
     totalCalls: 0
   }));
 
@@ -74,10 +75,10 @@ export function createQuickClass(n, saveName) {
     saveData();
     initSessionForClass(cls.id);
     renderAll();
-    toast(`"${saveName}" με ${n} μαθητές δημιουργήθηκε!`, 'success');
+    toast(`"${saveName}" με ${n} μαθητές/ριες δημιουργήθηκε!`, 'success');
   } else {
     const tempId = 'temp_' + uuid();
-    const cls = { id: tempId, name: `Προσωρινό (${n} μαθητές)`, students, _temp: true };
+    const cls = { id: tempId, name: `Προσωρινό (${n} μαθητές/ριες)`, students, _temp: true };
     appData.classes.push(cls);
     appData.currentClassId = tempId;
     session.classId = tempId;
@@ -99,7 +100,7 @@ export function initStudentEvents() {
     const cls = getCurrentClass();
     if (!cls) { toast('Δημιούργησε πρώτα ένα τμήμα', 'error'); return; }
     showModal(`
-      <h3>Εισαγωγή Λίστας Μαθητών</h3>
+      <h3>Εισαγωγή Λίστας Μαθητών/ριών</h3>
       <p>Ένα όνομα ανά γραμμή:</p>
       <textarea id="paste-area" placeholder="Παπαδόπουλος Νίκος&#10;Γεωργίου Μαρία&#10;..."></textarea>
       <div class="modal-footer">
@@ -118,8 +119,8 @@ export function initStudentEvents() {
         if (!cls) { toast('Δεν βρέθηκε τμήμα', 'error'); return; }
         if (cls.students.length > 0) {
           showModal(`
-            <h3>Υπάρχουν ήδη μαθητές</h3>
-            <p>Τι να κάνω με τους <strong>${cls.students.length}</strong> υπάρχοντες μαθητές;</p>
+            <h3>Υπάρχουν ήδη μαθητές/ριες</h3>
+            <p>Τι να κάνω με τους <strong>${cls.students.length}</strong> υπάρχοντες/ουσες μαθητές/ριες;</p>
             <div class="modal-footer">
               <button class="btn btn-secondary" data-action="cancel">Ακύρωση</button>
               <button class="btn btn-secondary" data-action="merge">Merge (προσθήκη)</button>
@@ -130,17 +131,17 @@ export function initStudentEvents() {
             modal2.querySelector('[data-action=merge]').onclick = () => {
               close2();
               addStudentsBulk(cls, names);
-              toast(`${names.length} μαθητές προστέθηκαν`, 'success');
+              toast(`${names.length} μαθητές/ριες προστέθηκαν`, 'success');
             };
             modal2.querySelector('[data-action=replace]').onclick = () => {
               close2();
               addStudentsBulk(cls, names, { replace: true });
-              toast(`Λίστα αντικαταστάθηκε με ${names.length} μαθητές`, 'success');
+              toast(`Λίστα αντικαταστάθηκε με ${names.length} μαθητές/ριες`, 'success');
             };
           });
         } else {
           addStudentsBulk(cls, names);
-          toast(`${names.length} μαθητές προστέθηκαν`, 'success');
+          toast(`${names.length} μαθητές/ριες προστέθηκαν`, 'success');
         }
       };
     });
@@ -149,10 +150,10 @@ export function initStudentEvents() {
   document.getElementById('btn-quick-mode').addEventListener('click', () => {
     showModal(`
       <h3>⚡ Γρήγορη Δημιουργία</h3>
-      <p>Ο καθηγητής μοιράζει αριθμούς στους μαθητές. Το σύστημα επιλέγει "Μαθητής 7" κ.λπ.</p>
+      <p>Ο καθηγητής μοιράζει αριθμούς στους/στις μαθητές/ριες. Το σύστημα επιλέγει "Μαθητής/ρια 7" κ.λπ.</p>
       <div style="display:flex;align-items:center;gap:12px;margin:16px 0;">
-        <label style="font-weight:600;">Αριθμός μαθητών:</label>
-        <input type="number" id="quick-count" min="1" max="100" value="20">
+        <label style="font-weight:600;">Αριθμός μαθητών/ριών:</label>
+        <input type="number" id="quick-count" min="1" max="100" value="15">
       </div>
       <div class="modal-footer">
         <button class="btn btn-secondary" data-action="cancel">Ακύρωση</button>
@@ -166,9 +167,13 @@ export function initStudentEvents() {
         const n = parseInt(inp.value);
         if (!n || n < 1) { toast('Δώσε έγκυρο αριθμό', 'error'); return; }
         close();
+        if (getAuthMode() === 'guest') {
+          createQuickClass(n, null);
+          return;
+        }
         showModal(`
           <h3>Αποθήκευση ή Προσωρινή Χρήση;</h3>
-          <p>Θέλεις να αποθηκεύσεις τη λίστα με ${n} μαθητές ή να τη χρησιμοποιήσεις μόνο τώρα;</p>
+          <p>Θέλεις να αποθηκεύσεις τη λίστα με ${n} μαθητές/ριες ή να τη χρησιμοποιήσεις μόνο τώρα;</p>
           <div class="modal-footer">
             <button class="btn btn-secondary" data-action="cancel">Ακύρωση</button>
             <button class="btn btn-secondary" data-action="temp">Μόνο τώρα</button>
@@ -184,7 +189,7 @@ export function initStudentEvents() {
             close2();
             showModal(`
               <h3>Όνομα Τμήματος</h3>
-              <input type="text" class="input-text" id="quick-class-name" placeholder="π.χ. Β2 - Αριθμοί" style="width:100%" value="Τμήμα ${n} μαθητών">
+              <input type="text" class="input-text" id="quick-class-name" placeholder="π.χ. Β2 - Αριθμοί" style="width:100%" value="Τμήμα ${n} μαθητών/ριών">
               <div class="modal-footer">
                 <button class="btn btn-secondary" data-action="cancel">Ακύρωση</button>
                 <button class="btn btn-primary" data-action="confirm">Δημιουργία</button>
@@ -194,7 +199,7 @@ export function initStudentEvents() {
               nameInp.focus(); nameInp.select();
               modal3.querySelector('[data-action=cancel]').onclick = close3;
               modal3.querySelector('[data-action=confirm]').onclick = () => {
-                const name = nameInp.value.trim() || `Τμήμα ${n} μαθητών`;
+                const name = nameInp.value.trim() || `Τμήμα ${n} μαθητών/ριών`;
                 close3();
                 createQuickClass(n, name);
               };

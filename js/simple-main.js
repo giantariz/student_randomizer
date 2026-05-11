@@ -32,7 +32,7 @@ function escHtml(str) {
 function createSession(n) {
   students = Array.from({ length: n }, (_, i) => ({
     id: uuid(),
-    name: `Μαθητής ${i + 1}`
+    name: `Μαθητής/ρια ${i + 1}`
   }));
   pool    = students.map(s => s.id);
   called  = [];
@@ -51,14 +51,14 @@ function pick() {
   let available;
   if (!uniqueMode) {
     available = students.filter(s => !absent.includes(s.id));
-    if (available.length === 0) { toast('Δεν υπάρχουν διαθέσιμοι μαθητές', 'error'); return; }
+    if (available.length === 0) { toast('Δεν υπάρχουν διαθέσιμοι/ες μαθητές/ριες', 'error'); return; }
   } else {
     const availableIds = pool.filter(id => !absent.includes(id));
     if (availableIds.length === 0) {
       const nonAbsent = students.filter(s => !absent.includes(s.id));
-      if (nonAbsent.length === 0) { toast('Δεν υπάρχουν διαθέσιμοι μαθητές', 'error'); return; }
+      if (nonAbsent.length === 0) { toast('Δεν υπάρχουν διαθέσιμοι/ες μαθητές/ριες', 'error'); return; }
       pool = nonAbsent.map(s => s.id);
-      toast('🔄 Νέος γύρος! Όλοι οι μαθητές επέστρεψαν.', 'info');
+      toast('🔄 Νέος γύρος! Όλοι/ες οι μαθητές/ριες επέστρεψαν.', 'info');
       renderAll();
       return;
     }
@@ -103,7 +103,7 @@ function undo() {
 
 function resetSession() {
   confirmDialog(
-    'Επαναφορά session; Όλοι οι μαθητές επιστρέφουν στο pool και το ιστορικό χάνεται.',
+    'Επαναφορά session; Όλοι/ες οι μαθητές/ριες επιστρέφουν στο pool και το ιστορικό χάνεται.',
     () => {
       pool    = students.map(s => s.id);
       called  = [];
@@ -160,7 +160,7 @@ function renderGrid() {
 
 function renderHistory() {
   const ul = document.getElementById('simple-history-list');
-  const emptyMsg = '<li style="color:var(--text2);font-size:14px;">Κανένας μαθητής δεν έχει κληθεί ακόμα.</li>';
+  const emptyMsg = '<li style="color:var(--text2);font-size:14px;">Κανένας/καμία μαθητής/ρια δεν έχει κληθεί ακόμα.</li>';
   if (history.length === 0) {
     ul.innerHTML = emptyMsg;
   } else {

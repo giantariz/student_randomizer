@@ -12,7 +12,7 @@ export function initHistoryEvents() {
     const entriesHtml = appData.sessionHistory.map(e => {
       const metaParts = [];
       if (e.mode) metaParts.push(e.mode === 'unique' ? '🔒 Μοναδικές' : '🔁 Επαναλήψεις');
-      if (e.pickerType) metaParts.push(e.pickerType === 'neon' ? '⚡ Neon' : '🍬 Candy');
+      if (e.pickerType) metaParts.push(e.pickerType === 'neon' ? '⚡ Neon' : '🎰 Kino');
       if (e.totalRounds && e.totalRounds > 1) metaParts.push(`${e.totalRounds} γύροι`);
       if (e.durationSec) {
         const m = Math.floor(e.durationSec / 60);

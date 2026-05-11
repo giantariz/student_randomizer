@@ -45,7 +45,7 @@ export function renderStudentsGrid() {
     grid.innerHTML = `
       <div class="empty-state" style="grid-column:1/-1">
         <div class="icon">👥</div>
-        <p>Δεν υπάρχουν μαθητές. Πρόσθεσε τον πρώτο!</p>
+        <p>Δεν υπάρχουν μαθητές/ριες. Πρόσθεσε τον/την πρώτο/η!</p>
       </div>`;
     return;
   }
@@ -90,7 +90,7 @@ export function renderStatsBadge() {
 
 export function renderHistoryList() {
   const cls = getCurrentClass();
-  const emptyMsg = '<li style="color:var(--text2);font-size:14px;">Κανένας μαθητής δεν έχει κληθεί ακόμα.</li>';
+  const emptyMsg = '<li style="color:var(--text2);font-size:14px;">Κανένας/καμία μαθητής/ρια δεν έχει κληθεί ακόμα.</li>';
 
   // Expert mode history (reverse order)
   const ul = document.getElementById('history-list');

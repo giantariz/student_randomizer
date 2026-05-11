@@ -52,11 +52,11 @@
 
     <div class="sidebar-picker-divider"></div>
     <div class="sidebar-title">Ρυθμίσεις</div>
-    <label class="sidebar-toggle" title="Κάθε μαθητής επιλέγεται μόνο μία φορά ανά γύρο">
+    <label class="sidebar-toggle" title="Κάθε μαθητής/ρια επιλέγεται μόνο μία φορά ανά γύρο">
       <input type="checkbox" id="chk-unique-advanced" checked>
       <span>Μοναδικές επιλογές ανά γύρο</span>
     </label>
-    <label class="sidebar-toggle" title="Μαθητές με λιγότερες κλήσεις έχουν μεγαλύτερο βάρος">
+    <label class="sidebar-toggle" title="Μαθητές/ριες με λιγότερες κλήσεις έχουν μεγαλύτερο βάρος">
       <input type="checkbox" id="chk-fair-mode">
       <span>⚖️ Fair Mode</span>
     </label>
@@ -69,8 +69,8 @@
         <span>⚡ Neon</span>
       </label>
       <label class="picker-option">
-        <input type="radio" name="picker-type" value="candy">
-        <span>🍬 Candy</span>
+        <input type="radio" name="picker-type" value="kino">
+        <span>🎰 Kino</span>
       </label>
     </div>
     <div id="picker-display"></div>
@@ -88,7 +88,7 @@
         <!-- ACTION AREA -->
         <div class="action-area">
           <div style="margin-bottom:12px;">
-            <button class="btn btn-primary btn-pick" id="btn-pick">🎲 ΕΠΙΛΟΓΗ ΜΑΘΗΤΗ</button>
+            <button class="btn btn-primary btn-pick" id="btn-pick">🎲 ΕΠΙΛΟΓΗ ΜΑΘΗΤΗ/ΡΙΑΣ</button>
           </div>
           <div class="action-row">
             <span class="stats-badge" id="stats-badge">0 / 0 επιλέχθηκαν</span>
@@ -102,7 +102,7 @@
         <!-- STUDENTS SECTION -->
         <div class="students-section">
           <div class="section-header">
-            <span class="section-title">Μαθητές</span>
+            <span class="section-title">Μαθητές/ριες</span>
             <div style="display:flex;gap:8px;flex-wrap:wrap;">
               <button class="btn btn-secondary" id="btn-quick-mode">⚡ Γρήγορη Δημιουργία</button>
               <button class="btn btn-secondary" id="btn-show-history">📋 Προβολή Ιστορικού</button>
@@ -114,7 +114,7 @@
         <!-- MANAGE AREA -->
         <div class="manage-area">
           <div class="add-row">
-            <input type="text" class="input-text" id="new-student-input" placeholder="Όνομα μαθητή...">
+            <input type="text" class="input-text" id="new-student-input" placeholder="Όνομα μαθητή/ριας...">
             <button class="btn btn-primary" id="btn-add-student">+ Προσθήκη</button>
             <button class="btn btn-secondary" id="btn-paste-list">📋 Paste Λίστα</button>
           </div>
@@ -129,7 +129,7 @@
             <span class="section-title">Ιστορικό Κλήσεων (Σήμερα)</span>
           </div>
           <ul class="history-list" id="history-list">
-            <li style="color:var(--text2);font-size:14px;">Κανένας μαθητής δεν έχει κληθεί ακόμα.</li>
+            <li style="color:var(--text2);font-size:14px;">Κανένας/καμία μαθητής/ρια δεν έχει κληθεί ακόμα.</li>
           </ul>
         </div>
       </div><!-- /main-right -->
