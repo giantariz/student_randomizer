@@ -129,16 +129,16 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 24px 20px;
+  padding: clamp(18px, 3vw, 44px);
   overflow-y: auto;
 }
 
 .picker-overlay-label {
-  font-size: 22px;
+  font-size: clamp(28px, 3vw, 44px);
   font-weight: 700;
   color: #fff;
   text-align: center;
-  margin-bottom: 20px;
+  margin-bottom: clamp(24px, 3vw, 40px);
   letter-spacing: 0.02em;
 }
 
@@ -156,7 +156,7 @@
   flex-direction: column;
   align-items: center;
   width: 100%;
-  max-width: 520px;
+  max-width: min(92vw, 920px);
 }
 
 /* Base neon display — used inside overlay */
@@ -202,17 +202,17 @@
 
 /* Larger neon in overlay */
 .picker-overlay-neon {
-  height: 160px;
+  min-height: clamp(220px, 30vh, 360px);
 }
 
 .picker-overlay-neon .neon-text {
-  font-size: 42px;
+  font-size: clamp(54px, 8vw, 110px);
 }
 
 /* ── CANDY POP overlay ───────────────────────────────────────────────────────*/
 .picker-overlay-candy-wrap {
   width: 100%;
-  max-width: 960px;
+  max-width: min(96vw, 1320px);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -220,11 +220,21 @@
 
 .picker-overlay-cards {
   width: 100%;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: clamp(12px, 1.6vw, 22px);
 }
 
 /* Cards inside overlay: not interactive */
 .picker-overlay-card {
   cursor: default !important;
+  min-height: clamp(112px, 14vh, 170px);
+  padding: clamp(18px, 2vw, 28px) clamp(12px, 1.5vw, 22px);
+}
+.picker-overlay-card .name {
+  font-size: clamp(22px, 2.3vw, 36px);
+}
+.picker-overlay-card .status-dot {
+  font-size: clamp(22px, 2.2vw, 34px);
 }
 .picker-overlay-card:active {
   transform: none !important;
@@ -271,7 +281,13 @@
 
 @media (max-width: 600px) {
   .picker-overlay { padding: 16px 12px; }
-  .picker-overlay-label { font-size: 18px; }
-  .picker-overlay-neon { height: 120px; }
-  .picker-overlay-neon .neon-text { font-size: 30px; }
+  .picker-overlay-label { font-size: 22px; margin-bottom: 18px; }
+  .picker-overlay-neon { min-height: 150px; }
+  .picker-overlay-neon .neon-text { font-size: 42px; }
+  .picker-overlay-cards {
+    grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+    gap: 10px;
+  }
+  .picker-overlay-card { min-height: 92px; }
+  .picker-overlay-card .name { font-size: 18px; }
 }
