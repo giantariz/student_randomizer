@@ -13,14 +13,17 @@ function _esc(s) {
 }
 
 const NEON_CFG = {
-  BASE_STEPS: 26, RANDOM_EXTRA: 16, INITIAL_DELAY_MS: 52,
-  SLOWDOWN_THRESHOLD: 0.65, FAST_INCREMENT: 4, SLOW_INCREMENT: 20,
+  // Λιγότερες ορατές εναλλαγές, με ίδιο συνολικό παράθυρο διάρκειας όπως πριν (~3.3-7s).
+  BASE_STEPS: 18, RANDOM_EXTRA: 10,
+  DURATION_MIN_MS: 3320, DURATION_MAX_MS: 7040, SLOWDOWN_POWER: 1.7,
   WINNER_GLOW_DURATION_MS: 1200,
 };
 
 const CANDY_CFG = {
-  BASE_STEPS: 32, RANDOM_EXTRA: 20, INITIAL_DELAY_MS: 48,
-  RANDOM_JUMP: 3, SLOWDOWN_THRESHOLD: 0.68, FAST_INCREMENT: 3, SLOW_INCREMENT: 16,
+  // Λιγότερες ορατές εναλλαγές, με ίδιο συνολικό παράθυρο διάρκειας όπως πριν (~3.7-8s).
+  BASE_STEPS: 22, RANDOM_EXTRA: 12,
+  DURATION_MIN_MS: 3691, DURATION_MAX_MS: 7993, SLOWDOWN_POWER: 1.55,
+  RANDOM_JUMP: 2,
 };
 
 // ── Public API ─────────────────────────────────────────────────────────────────
@@ -93,6 +96,45 @@ function _makeCloseable(overlay) {
   overlay.style.cursor = 'pointer';
 }
 
+function _randomDuration({ DURATION_MIN_MS, DURATION_MAX_MS }) {
+  return DURATION_MIN_MS + Math.random() * (DURATION_MAX_MS - DURATION_MIN_MS);
+}
+
+function _buildStepDelays(totalSteps, totalDuration, slowdownPower) {
+  const transitions = Math.max(totalSteps - 1, 1);
+  const weights = Array.from({ length: transitions }, (_, i) => {
+    const progress = (i + 1) / transitions;
+    return 0.65 + Math.pow(progress, slowdownPower) * 1.35;
+  });
+  const weightSum = weights.reduce((sum, weight) => sum + weight, 0);
+
+  return weights.map(weight => totalDuration * weight / weightSum);
+}
+
+function _fitCandyCardNames(grid) {
+  const names = Array.from(grid.querySelectorAll('.picker-overlay-card .name'));
+  names.forEach(nameEl => {
+    nameEl.style.fontSize = '';
+
+    let size = parseFloat(getComputedStyle(nameEl).fontSize);
+    const minSize = 14;
+
+    while (_candyNameOverflows(nameEl) && size > minSize) {
+      size -= 1;
+      nameEl.style.fontSize = `${size}px`;
+    }
+  });
+}
+
+function _candyNameOverflows(nameEl) {
+  const style = getComputedStyle(nameEl);
+  const lineHeight = parseFloat(style.lineHeight) || parseFloat(style.fontSize) * 1.15;
+  const maxTwoLineHeight = Math.ceil(lineHeight * 2);
+
+  return nameEl.scrollWidth > nameEl.clientWidth
+      || nameEl.scrollHeight > maxTwoLineHeight;
+}
+
 // ── Neon Pulse overlay ─────────────────────────────────────────────────────────
 
 function _spinNeonOverlay(students, onWinner, forcedWinner) {
@@ -116,15 +158,17 @@ function _spinNeonOverlay(students, onWinner, forcedWinner) {
 
   let step = 0;
   const totalSteps = NEON_CFG.BASE_STEPS + Math.floor(Math.random() * NEON_CFG.RANDOM_EXTRA);
-  let delay = NEON_CFG.INITIAL_DELAY_MS;
+  const stepDelays = _buildStepDelays(
+    totalSteps,
+    _randomDuration(NEON_CFG),
+    NEON_CFG.SLOWDOWN_POWER
+  );
 
   function tick() {
     textEl.textContent = students[Math.floor(Math.random() * students.length)].name;
     step++;
-    delay += step > totalSteps * NEON_CFG.SLOWDOWN_THRESHOLD
-      ? NEON_CFG.SLOW_INCREMENT : NEON_CFG.FAST_INCREMENT;
     if (step < totalSteps) {
-      _timer = setTimeout(tick, delay);
+      _timer = setTimeout(tick, stepDelays[step - 1]);
     } else {
       const winner = forcedWinner || students[Math.floor(Math.random() * students.length)];
       textEl.textContent = winner.name;
@@ -178,6 +222,7 @@ function _spinCandyOverlay(students, onWinner, forcedWinner) {
 
   overlay.appendChild(wrap);
   document.body.appendChild(overlay);
+  _fitCandyCardNames(grid);
 
   const availableCards = students
     .map(s => grid.querySelector(`.picker-overlay-card[data-id="${s.id}"]`))
@@ -186,7 +231,11 @@ function _spinCandyOverlay(students, onWinner, forcedWinner) {
   let current = 0;
   let step    = 0;
   const totalSteps = CANDY_CFG.BASE_STEPS + Math.floor(Math.random() * CANDY_CFG.RANDOM_EXTRA);
-  let delay = CANDY_CFG.INITIAL_DELAY_MS;
+  const stepDelays = _buildStepDelays(
+    totalSteps,
+    _randomDuration(CANDY_CFG),
+    CANDY_CFG.SLOWDOWN_POWER
+  );
 
   function tick() {
     availableCards.forEach(c => c.classList.remove('picker-active'));
@@ -195,11 +244,8 @@ function _spinCandyOverlay(students, onWinner, forcedWinner) {
     availableCards[current].classList.add('picker-active');
 
     step++;
-    delay += step > totalSteps * CANDY_CFG.SLOWDOWN_THRESHOLD
-      ? CANDY_CFG.SLOW_INCREMENT : CANDY_CFG.FAST_INCREMENT;
-
     if (step < totalSteps) {
-      _timer = setTimeout(tick, delay);
+      _timer = setTimeout(tick, stepDelays[step - 1]);
     } else {
       let winner;
       if (forcedWinner) {
