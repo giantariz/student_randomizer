@@ -4,7 +4,10 @@ import { showModal } from './modal.js';
 import { saveData } from './data.js';
 
 export function initHistoryEvents() {
-  document.getElementById('btn-show-history').addEventListener('click', () => {
+  const showHistoryBtn = document.getElementById('btn-show-history');
+  if (!showHistoryBtn) return;
+
+  showHistoryBtn.addEventListener('click', () => {
     if (appData.sessionHistory.length === 0) {
       toast('Δεν υπάρχει αποθηκευμένο ιστορικό', 'info');
       return;

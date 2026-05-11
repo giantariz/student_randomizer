@@ -14,7 +14,7 @@ export function initGroupsEvents() {
       <p>${present.length} παρόντες/παρούσες μαθητές/ριες.</p>
       <div style="display:flex;gap:16px;margin:12px 0;">
         <label style="display:flex;align-items:center;gap:6px;cursor:pointer;">
-          <input type="radio" name="group-mode" value="size" checked> Ανά μέγεθος
+          <input type="radio" name="group-mode" value="size" checked> Ανά μέγεθος ομάδας
         </label>
         <label style="display:flex;align-items:center;gap:6px;cursor:pointer;">
           <input type="radio" name="group-mode" value="count"> Ανά αριθμό ομάδων
