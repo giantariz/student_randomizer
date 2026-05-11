@@ -21,8 +21,8 @@ const NEON_CFG = {
 };
 
 const KINO_CFG = {
-  // Λιγότερες ορατές εναλλαγές, με ίδιο συνολικό παράθυρο διάρκειας όπως πριν (~3.7-8s).
-  BASE_STEPS: 22, RANDOM_EXTRA: 12,
+  // Πιο αργές ορατές εναλλαγές: λιγότερα βήματα, ίδιο συνολικό παράθυρο διάρκειας (~3.7-8s).
+  BASE_STEPS: 14, RANDOM_EXTRA: 7,
   DURATION_MIN_MS: 3691, DURATION_MAX_MS: 7993, SLOWDOWN_POWER: 1.55,
 };
 
