@@ -21,7 +21,7 @@
 - Εξαγωγή / εισαγωγή δεδομένων σε JSON και CSV
 
 ### Κοινά χαρακτηριστικά
-- Δύο στυλ κλήρωσης: **Neon Pulse** (κινούμενο κείμενο) και **Candy Pop** (κάρτες)
+- Δύο στυλ κλήρωσης: **Neon Pulse** (κινούμενο κείμενο) και **Kino** (κάρτες)
 - **Unique Mode**: κάθε μαθητής/ρια κλείνεται μία φορά πριν επαναληφθεί ο γύρος
 - Σήμανση απόντων — αποκλείονται αυτόματα από την κλήρωση
 - Αναίρεση (Undo) τελευταίας κλήσης
@@ -65,7 +65,7 @@ student_randomizer/
     ├── state.js          # App state
     ├── data.js           # localStorage persistence
     ├── syncFirestore.js  # Firestore sync
-    ├── picker.js         # Κλήρωση (Neon & Candy overlays)
+    ├── picker.js         # Κλήρωση (Neon & Kino overlays)
     ├── animation.js      # Animations
     ├── render.js         # DOM rendering
     ├── students.js       # Student CRUD

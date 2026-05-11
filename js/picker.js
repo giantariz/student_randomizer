@@ -1,6 +1,7 @@
 // ── State ──────────────────────────────────────────────────────────────────────
 
-let _type        = localStorage.getItem('sr-picker-type') || 'neon';
+const _storedType = localStorage.getItem('sr-picker-type');
+let _type        = _storedType === 'candy' ? 'kino' : (_storedType || 'neon');
 let _timer       = null;
 let _allStudents = [];
 let _calledIds   = [];
@@ -19,7 +20,7 @@ const NEON_CFG = {
   WINNER_GLOW_DURATION_MS: 1200,
 };
 
-const CANDY_CFG = {
+const KINO_CFG = {
   // Λιγότερες ορατές εναλλαγές, με ίδιο συνολικό παράθυρο διάρκειας όπως πριν (~3.7-8s).
   BASE_STEPS: 22, RANDOM_EXTRA: 12,
   DURATION_MIN_MS: 3691, DURATION_MAX_MS: 7993, SLOWDOWN_POWER: 1.55,
@@ -56,7 +57,7 @@ export function spinPicker(availableStudents, onWinner, forcedWinner = null) {
   if (_type === 'neon') {
     _spinNeonOverlay(availableStudents, onWinner, forcedWinner);
   } else {
-    _spinCandyOverlay(availableStudents, onWinner, forcedWinner);
+    _spinKinoOverlay(availableStudents, onWinner, forcedWinner);
   }
 }
 
@@ -73,7 +74,7 @@ function _renderThumb() {
   } else {
     const labels = ['Α1', 'Α2', 'Α3', 'Α4', 'Α5', 'Α6'];
     container.innerHTML = `
-      <div class="picker-thumb picker-thumb-candy">
+      <div class="picker-thumb picker-thumb-kino">
         ${labels.map((l, i) =>
           `<div class="picker-thumb-card${i === 2 ? ' picker-thumb-active' : ''}">${l}</div>`
         ).join('')}
@@ -111,7 +112,7 @@ function _buildStepDelays(totalSteps, totalDuration, slowdownPower) {
   return weights.map(weight => totalDuration * weight / weightSum);
 }
 
-function _fitCandyCardNames(grid) {
+function _fitKinoCardNames(grid) {
   const names = Array.from(grid.querySelectorAll('.picker-overlay-card .name'));
   names.forEach(nameEl => {
     nameEl.style.fontSize = '';
@@ -119,14 +120,14 @@ function _fitCandyCardNames(grid) {
     let size = parseFloat(getComputedStyle(nameEl).fontSize);
     const minSize = 14;
 
-    while (_candyNameOverflows(nameEl) && size > minSize) {
+    while (_kinoNameOverflows(nameEl) && size > minSize) {
       size -= 1;
       nameEl.style.fontSize = `${size}px`;
     }
   });
 }
 
-function _candyNameOverflows(nameEl) {
+function _kinoNameOverflows(nameEl) {
   const style = getComputedStyle(nameEl);
   const lineHeight = parseFloat(style.lineHeight) || parseFloat(style.fontSize) * 1.15;
   const maxTwoLineHeight = Math.ceil(lineHeight * 2);
@@ -182,9 +183,9 @@ function _spinNeonOverlay(students, onWinner, forcedWinner) {
   tick();
 }
 
-// ── Candy Pop overlay ──────────────────────────────────────────────────────────
+// ── Kino overlay ──────────────────────────────────────────────────────────
 
-function _spinCandyOverlay(students, onWinner, forcedWinner) {
+function _spinKinoOverlay(students, onWinner, forcedWinner) {
   if (!students.length) return;
 
   // Fallback: if updatePickerDisplay hasn't been called yet, use available students
@@ -192,7 +193,7 @@ function _spinCandyOverlay(students, onWinner, forcedWinner) {
 
   const overlay = _createOverlay();
   const wrap = document.createElement('div');
-  wrap.className = 'picker-overlay-candy-wrap';
+  wrap.className = 'picker-overlay-kino-wrap';
 
   const label = document.createElement('div');
   label.className = 'picker-overlay-label';
@@ -222,7 +223,7 @@ function _spinCandyOverlay(students, onWinner, forcedWinner) {
 
   overlay.appendChild(wrap);
   document.body.appendChild(overlay);
-  _fitCandyCardNames(grid);
+  _fitKinoCardNames(grid);
 
   const availableCards = students
     .map(s => grid.querySelector(`.picker-overlay-card[data-id="${s.id}"]`))
@@ -230,16 +231,16 @@ function _spinCandyOverlay(students, onWinner, forcedWinner) {
 
   let current = 0;
   let step    = 0;
-  const totalSteps = CANDY_CFG.BASE_STEPS + Math.floor(Math.random() * CANDY_CFG.RANDOM_EXTRA);
+  const totalSteps = KINO_CFG.BASE_STEPS + Math.floor(Math.random() * KINO_CFG.RANDOM_EXTRA);
   const stepDelays = _buildStepDelays(
     totalSteps,
-    _randomDuration(CANDY_CFG),
-    CANDY_CFG.SLOWDOWN_POWER
+    _randomDuration(KINO_CFG),
+    KINO_CFG.SLOWDOWN_POWER
   );
 
   function tick() {
     availableCards.forEach(c => c.classList.remove('picker-active'));
-    current = (current + 1 + Math.floor(Math.random() * CANDY_CFG.RANDOM_JUMP))
+    current = (current + 1 + Math.floor(Math.random() * KINO_CFG.RANDOM_JUMP))
               % availableCards.length;
     availableCards[current].classList.add('picker-active');
 

@@ -91,8 +91,8 @@
   text-shadow: 0 0 10px #38bdf8;
 }
 
-/* Candy Pop thumbnail */
-.picker-thumb-candy {
+/* Kino thumbnail */
+.picker-thumb-kino {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 4px;
@@ -156,7 +156,7 @@
   flex-direction: column;
   align-items: center;
   width: 100%;
-  max-width: min(92vw, 920px);
+  max-width: min(96vw, 1080px);
 }
 
 /* Base neon display — used inside overlay */
@@ -212,15 +212,14 @@
   max-width: 100%;
   font-size: clamp(42px, 6vw, 96px);
   line-height: 1.05;
-  white-space: normal;
+  white-space: nowrap;
   overflow-wrap: normal;
   word-break: normal;
   hyphens: none;
-  text-wrap: balance;
 }
 
-/* ── CANDY POP overlay ───────────────────────────────────────────────────────*/
-.picker-overlay-candy-wrap {
+/* ── KINO overlay ───────────────────────────────────────────────────────*/
+.picker-overlay-kino-wrap {
   width: 100%;
   max-width: min(96vw, 1320px);
   display: flex;

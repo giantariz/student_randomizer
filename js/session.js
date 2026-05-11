@@ -11,7 +11,8 @@ export function saveCurrentSessionHistory() {
   const cls = getCurrentClass();
   if (!cls || session.history.length === 0) return;
 
-  const pickerType = localStorage.getItem('sr-picker-type') || 'neon';
+  const storedPickerType = localStorage.getItem('sr-picker-type');
+  const pickerType = storedPickerType === 'candy' ? 'kino' : (storedPickerType || 'neon');
   const endedAt    = Date.now();
   const durationSec = session.startedAt
     ? Math.round((endedAt - session.startedAt) / 1000)
