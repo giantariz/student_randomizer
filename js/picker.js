@@ -111,6 +111,21 @@ function _buildStepDelays(totalSteps, totalDuration, slowdownPower) {
   return weights.map(weight => totalDuration * weight / weightSum);
 }
 
+function _fitCandyCardNames(grid) {
+  const names = Array.from(grid.querySelectorAll('.picker-overlay-card .name'));
+  names.forEach(nameEl => {
+    nameEl.style.fontSize = '';
+
+    let size = parseFloat(getComputedStyle(nameEl).fontSize);
+    const minSize = 14;
+
+    while (nameEl.scrollWidth > nameEl.clientWidth && size > minSize) {
+      size -= 1;
+      nameEl.style.fontSize = `${size}px`;
+    }
+  });
+}
+
 // ── Neon Pulse overlay ─────────────────────────────────────────────────────────
 
 function _spinNeonOverlay(students, onWinner, forcedWinner) {
@@ -198,6 +213,7 @@ function _spinCandyOverlay(students, onWinner, forcedWinner) {
 
   overlay.appendChild(wrap);
   document.body.appendChild(overlay);
+  _fitCandyCardNames(grid);
 
   const availableCards = students
     .map(s => grid.querySelector(`.picker-overlay-card[data-id="${s.id}"]`))
