@@ -24,7 +24,6 @@ const KINO_CFG = {
   // Λιγότερες ορατές εναλλαγές, με ίδιο συνολικό παράθυρο διάρκειας όπως πριν (~3.7-8s).
   BASE_STEPS: 22, RANDOM_EXTRA: 12,
   DURATION_MIN_MS: 3691, DURATION_MAX_MS: 7993, SLOWDOWN_POWER: 1.55,
-  RANDOM_JUMP: 2,
 };
 
 // ── Public API ─────────────────────────────────────────────────────────────────
@@ -110,6 +109,41 @@ function _buildStepDelays(totalSteps, totalDuration, slowdownPower) {
   const weightSum = weights.reduce((sum, weight) => sum + weight, 0);
 
   return weights.map(weight => totalDuration * weight / weightSum);
+}
+
+function _shuffleIndexes(count) {
+  const indexes = Array.from({ length: count }, (_, i) => i);
+  for (let i = indexes.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [indexes[i], indexes[j]] = [indexes[j], indexes[i]];
+  }
+  return indexes;
+}
+
+function _buildRandomKinoPath(cardCount, totalSteps) {
+  if (cardCount <= 1) return Array.from({ length: totalSteps }, () => 0);
+
+  const path = [];
+  let remaining = [];
+  let previous = -1;
+
+  while (path.length < totalSteps) {
+    if (!remaining.length) remaining = _shuffleIndexes(cardCount);
+
+    if (remaining[0] === previous) {
+      if (remaining.length > 1) {
+        [remaining[0], remaining[1]] = [remaining[1], remaining[0]];
+      } else {
+        remaining = _shuffleIndexes(cardCount).filter(index => index !== previous);
+      }
+    }
+
+    const next = remaining.shift();
+    path.push(next);
+    previous = next;
+  }
+
+  return path;
 }
 
 function _fitKinoCardNames(grid) {
@@ -237,11 +271,11 @@ function _spinKinoOverlay(students, onWinner, forcedWinner) {
     _randomDuration(KINO_CFG),
     KINO_CFG.SLOWDOWN_POWER
   );
+  const randomPath = _buildRandomKinoPath(availableCards.length, totalSteps);
 
   function tick() {
     availableCards.forEach(c => c.classList.remove('picker-active'));
-    current = (current + 1 + Math.floor(Math.random() * KINO_CFG.RANDOM_JUMP))
-              % availableCards.length;
+    current = randomPath[step];
     availableCards[current].classList.add('picker-active');
 
     step++;
