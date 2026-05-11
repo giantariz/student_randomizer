@@ -119,11 +119,20 @@ function _fitCandyCardNames(grid) {
     let size = parseFloat(getComputedStyle(nameEl).fontSize);
     const minSize = 14;
 
-    while (nameEl.scrollWidth > nameEl.clientWidth && size > minSize) {
+    while (_candyNameOverflows(nameEl) && size > minSize) {
       size -= 1;
       nameEl.style.fontSize = `${size}px`;
     }
   });
+}
+
+function _candyNameOverflows(nameEl) {
+  const style = getComputedStyle(nameEl);
+  const lineHeight = parseFloat(style.lineHeight) || parseFloat(style.fontSize) * 1.15;
+  const maxTwoLineHeight = Math.ceil(lineHeight * 2);
+
+  return nameEl.scrollWidth > nameEl.clientWidth
+      || nameEl.scrollHeight > maxTwoLineHeight;
 }
 
 // ── Neon Pulse overlay ─────────────────────────────────────────────────────────
