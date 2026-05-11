@@ -81,7 +81,7 @@ function exportCsv() {
     toast('Δεν υπάρχει ιστορικό για εξαγωγή', 'error');
     return;
   }
-  const rows = [['Ημερομηνία', 'Τμήμα', 'Μαθητές που κλήθηκαν']];
+  const rows = [['Ημερομηνία', 'Τμήμα', 'Μαθητές/ριες που κλήθηκαν']];
   if (session.history.length > 0 && cls) {
     const names = session.history
       .map(h => cls.students.find(s => s.id === h.studentId)?.name)

@@ -7,11 +7,11 @@ export function initGroupsEvents() {
     const cls = getCurrentClass();
     if (!cls) return;
     const present = cls.students.filter(s => !session.absent.includes(s.id));
-    if (present.length < 2) { toast('Χρειάζονται τουλάχιστον 2 παρόντες μαθητές', 'error'); return; }
+    if (present.length < 2) { toast('Χρειάζονται τουλάχιστον 2 παρόντες/παρούσες μαθητές/ριες', 'error'); return; }
 
     showModal(`
       <h3>👥 Δημιουργία Ομάδων</h3>
-      <p>${present.length} παρόντες μαθητές.</p>
+      <p>${present.length} παρόντες/παρούσες μαθητές/ριες.</p>
       <div style="display:flex;gap:16px;margin:12px 0;">
         <label style="display:flex;align-items:center;gap:6px;cursor:pointer;">
           <input type="radio" name="group-mode" value="size" checked> Ανά μέγεθος
@@ -53,12 +53,12 @@ export function initGroupsEvents() {
         if (byCount) {
           const numGroups = parseInt(countInp.value);
           if (!numGroups || numGroups < 2) { toast('Αριθμός ομάδων ≥ 2', 'error'); return; }
-          if (numGroups > Math.floor(present.length / 2)) { toast('Πολλές ομάδες για τόσους μαθητές', 'error'); return; }
+          if (numGroups > Math.floor(present.length / 2)) { toast('Πολλές ομάδες για τόσους/ες μαθητές/ριες', 'error'); return; }
           size = Math.ceil(present.length / numGroups);
         } else {
           size = parseInt(sizeInp.value);
           if (!size || size < 2) { toast('Μέγεθος ≥ 2', 'error'); return; }
-          if (size > present.length) { toast('Λίγοι μαθητές για αυτό το μέγεθος', 'error'); return; }
+          if (size > present.length) { toast('Λίγοι/ες μαθητές/ριες για αυτό το μέγεθος', 'error'); return; }
         }
         close();
         showGroupsOverlay(present, size);

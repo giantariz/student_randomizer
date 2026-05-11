@@ -76,7 +76,7 @@ export function initSessionEvents() {
 
   document.getElementById('btn-reset-session').addEventListener('click', () => {
     confirmDialog(
-      'Επαναφορά session; Όλοι οι μαθητές επιστρέφουν στο pool και το ιστορικό χάνεται.',
+      'Επαναφορά session; Όλοι/ες οι μαθητές/ριες επιστρέφουν στο pool και το ιστορικό χάνεται.',
       () => {
         saveCurrentSessionHistory();
         initSessionForClass(appData.currentClassId);
@@ -116,12 +116,12 @@ function pickStudent() {
   let available;
   if (!simpleUniqueMode) {
     available = cls.students.filter(s => !session.absent.includes(s.id));
-    if (available.length === 0) { toast('Δεν υπάρχουν διαθέσιμοι μαθητές', 'error'); return; }
+    if (available.length === 0) { toast('Δεν υπάρχουν διαθέσιμοι/ες μαθητές/ριες', 'error'); return; }
   } else {
     const availableIds = session.pool.filter(id => !session.absent.includes(id));
     if (availableIds.length === 0) {
       const nonAbsent = cls.students.filter(s => !session.absent.includes(s.id));
-      if (nonAbsent.length === 0) { toast('Δεν υπάρχουν διαθέσιμοι μαθητές', 'error'); return; }
+      if (nonAbsent.length === 0) { toast('Δεν υπάρχουν διαθέσιμοι/ες μαθητές/ριες', 'error'); return; }
       session.roundNumber = (session.roundNumber || 1) + 1;
       session.pool = nonAbsent.map(s => s.id);
       saveSession();
@@ -197,7 +197,7 @@ function _showRoundCompleteModal(nonAbsent) {
   import('./modal.js').then(({ showModal }) => {
     showModal(`
       <h3>🏁 Γύρος ${roundJustFinished} ολοκληρώθηκε!</h3>
-      <p>Όλοι οι παρόντες μαθητές κλήθηκαν. Ξεκινά ο Γύρος ${session.roundNumber}.</p>
+      <p>Όλοι/ες οι παρόντες/παρούσες μαθητές/ριες κλήθηκαν. Ξεκινά ο Γύρος ${session.roundNumber}.</p>
       <div class="modal-footer">
         <button class="btn btn-secondary" data-action="later">Αργότερα</button>
         <button class="btn btn-primary" data-action="pick-now">🎲 Επιλογή τώρα</button>
