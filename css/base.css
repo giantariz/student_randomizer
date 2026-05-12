@@ -11,3 +11,22 @@ body {
 [hidden] {
   display: none !important;
 }
+
+.site-footer {
+  width: 100%;
+  padding: 18px 24px 24px;
+  text-align: center;
+  color: var(--text2);
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.site-footer a {
+  color: var(--accent);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.site-footer a:hover {
+  text-decoration: underline;
+}
