@@ -19,10 +19,12 @@
 - Ιστορικό κλήσεων ανά μαθητή/ρια και ανά session
 - Δημιουργία τυχαίων ομάδων από παρόντες/παρούσες μαθητές/ριες
 - Εξαγωγή / εισαγωγή δεδομένων σε JSON και CSV
+- **Fair Mode**: Ζυγισμένη τυχαιότητα — μαθητές/ριες που κλήθηκαν λιγότερο πρόσφατα έχουν μεγαλύτερη πιθανότητα επιλογής
+- Μεταφορά δεδομένων από guest session σε λογαριασμό Google
 
 ### Κοινά χαρακτηριστικά
 - Δύο στυλ κλήρωσης: **Neon Pulse** (κινούμενο κείμενο) και **Kino** (κάρτες)
-- **Unique Mode**: κάθε μαθητής/ρια κλείνεται μία φορά πριν επαναληφθεί ο γύρος
+- **Unique Mode**: κάθε μαθητής/ρια κλήθεται μία φορά πριν επαναληφθεί ο γύρος
 - Σήμανση απόντων — αποκλείονται αυτόματα από την κλήρωση
 - Αναίρεση (Undo) τελευταίας κλήσης
 - Εναλλαγή σκοτεινού / ανοιχτού θέματος
@@ -62,7 +64,7 @@ student_randomizer/
     ├── firebase.js       # Firebase init
     ├── auth.js           # Authentication logic
     ├── authScreen.js     # Auth UI
-    ├── state.js          # App state
+    ├── state.js          # App state + shared utilities (uuid, escHtml, shuffleArr)
     ├── data.js           # localStorage persistence
     ├── syncFirestore.js  # Firestore sync
     ├── picker.js         # Κλήρωση (Neon & Kino overlays)
@@ -72,7 +74,7 @@ student_randomizer/
     ├── classes.js        # Class management
     ├── groups.js         # Random group generator
     ├── history.js        # Session history
-    ├── session.js        # Session management
+    ├── session.js        # Session management + pick logic
     ├── exportImport.js   # JSON / CSV export-import
     ├── modal.js          # Modal dialogs
     ├── toast.js          # Toast notifications
@@ -109,3 +111,31 @@ npx serve .
 2. Ενεργοποίησε **Authentication → Google**.
 3. Ενεργοποίησε **Firestore Database**.
 4. Αντέγραψε τα config keys στο `js/firebase.js`.
+
+### Firestore Security Rules
+
+Πρόσθεσε τους παρακάτω κανόνες στο Firestore για να προστατεύσεις τα δεδομένα κάθε χρήστη:
+
+```
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /users/{userId}/{document=**} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+  }
+}
+```
+
+---
+
+## Περιορισμοί Guest Mode
+
+Ο guest mode αποθηκεύει δεδομένα **μόνο στη μνήμη** (in-memory). Τα δεδομένα χάνονται μόλις κλείσει ο browser ή ανανεωθεί η σελίδα. Για μόνιμη αποθήκευση απαιτείται σύνδεση με Google.
+
+---
+
+## Γνωστά ζητήματα
+
+- Το CSV export περιλαμβάνει μόνο ονόματα μαθητών/ριών — δεν εξάγει timestamps ανά κλήση.
+- Το Fair Mode βασίζεται σε εβδομαδιαίο μετρητή κλήσεων· μετά από 7 ημέρες αδράνειας ο μετρητής μηδενίζεται.
