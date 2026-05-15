@@ -26,6 +26,7 @@
 - Σήμανση απόντων — αποκλείονται αυτόματα από την κλήρωση
 - Αναίρεση (Undo) τελευταίας κλήσης
 - Εναλλαγή σκοτεινού / ανοιχτού θέματος
+- Ήχοι ανά mode με δυνατότητα σίγασης (mute/unmute)
 
 ---
 
@@ -76,6 +77,7 @@ student_randomizer/
     ├── exportImport.js   # JSON / CSV export-import
     ├── modal.js          # Modal dialogs
     ├── toast.js          # Toast notifications
+    ├── sound.js          # Web Audio sounds & mute toggle
     ├── theme.js          # Dark/light theme
     ├── mode.js           # Expert mode toggle
     ├── main.js           # Advanced Mode entry point
