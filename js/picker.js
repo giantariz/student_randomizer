@@ -1,3 +1,5 @@
+import { playNeonTick, playNeonWin, playKinoTick, playKinoWin } from './sound.js';
+
 // ── State ──────────────────────────────────────────────────────────────────────
 
 const _storedType = localStorage.getItem('sr-picker-type');
@@ -201,6 +203,7 @@ function _spinNeonOverlay(students, onWinner, forcedWinner) {
 
   function tick() {
     textEl.textContent = students[Math.floor(Math.random() * students.length)].name;
+    playNeonTick();
     step++;
     if (step < totalSteps) {
       _timer = setTimeout(tick, stepDelays[step - 1]);
@@ -210,6 +213,7 @@ function _spinNeonOverlay(students, onWinner, forcedWinner) {
       display.classList.remove('running');
       display.classList.add('winner-glow');
       labelEl.textContent = '🎉 Επελέγη:';
+      playNeonWin();
       _timer = setTimeout(() => _makeCloseable(overlay), NEON_CFG.WINNER_GLOW_DURATION_MS);
       onWinner(winner);
     }
@@ -277,6 +281,7 @@ function _spinKinoOverlay(students, onWinner, forcedWinner) {
     availableCards.forEach(c => c.classList.remove('picker-active'));
     current = randomPath[step];
     availableCards[current].classList.add('picker-active');
+    playKinoTick();
 
     step++;
     if (step < totalSteps) {
@@ -295,6 +300,7 @@ function _spinKinoOverlay(students, onWinner, forcedWinner) {
         availableCards[current].classList.add('picker-winner');
       }
       label.textContent = '🎉 Επελέγη:';
+      playKinoWin();
       _timer = setTimeout(() => _makeCloseable(overlay), 1200);
       onWinner(winner);
     }

@@ -1,4 +1,5 @@
 import { initTheme } from './theme.js';
+import { initMuteButton } from './sound.js';
 import { toast } from './toast.js';
 import { confirmDialog } from './modal.js';
 import { initPicker, spinPicker, updatePickerDisplay } from './picker.js';
@@ -190,6 +191,7 @@ function renderButtons() {
 
 function init() {
   initTheme();
+  initMuteButton();
   initPicker();
 
   // Setup phase

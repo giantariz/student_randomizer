@@ -13,6 +13,7 @@ import { showAuthScreen, hideAuthScreen } from './authScreen.js';
 import { loadUserData, syncUpsertClass } from './syncFirestore.js';
 import { showModal } from './modal.js';
 import { toast } from './toast.js';
+import { initMuteButton } from './sound.js';
 
 // Register student card handlers in render.js (avoids circular dependency)
 registerStudentHandlers(toggleAbsent, deleteStudent);
@@ -54,6 +55,7 @@ async function init() {
   await initAuth();
 
   initTheme();
+  initMuteButton();
   initAdvancedSettings();
 
   // Wire up all feature event listeners
